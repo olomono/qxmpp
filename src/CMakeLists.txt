@@ -39,6 +39,11 @@ set(INSTALL_HEADER_FILES
     base/QXmppMixItem.h
     base/QXmppMucIq.h
     base/QXmppNonSASLAuth.h
+    base/QXmppOmemoDevice.h
+    base/QXmppOmemoDeviceBundle.h
+    base/QXmppOmemoDeviceList.h
+    base/QXmppOmemoElement.h
+    base/QXmppOmemoEnvelope.h
     base/QXmppPingIq.h
     base/QXmppPresence.h
     base/QXmppPubSubEvent.h
@@ -72,6 +77,7 @@ set(INSTALL_HEADER_FILES
     client/QXmppMamManager.h
     client/QXmppMessageReceiptManager.h
     client/QXmppMucManager.h
+	client/QXmppOmemoManager.cpp
     client/QXmppOutgoingClient.h
     client/QXmppRegistrationManager.h
     client/QXmppPubSubManager.h
@@ -121,6 +127,11 @@ set(SOURCE_FILES
     base/QXmppMixItem.cpp
     base/QXmppMucIq.cpp
     base/QXmppNonSASLAuth.cpp
+    base/QXmppOmemoDevice.cpp
+    base/QXmppOmemoDeviceBundle.cpp
+    base/QXmppOmemoDeviceList.cpp
+    base/QXmppOmemoElement.cpp
+    base/QXmppOmemoEnvelope.cpp
     base/QXmppPingIq.cpp
     base/QXmppPresence.cpp
     base/QXmppPubSubEvent.cpp
@@ -158,6 +169,7 @@ set(SOURCE_FILES
     client/QXmppMamManager.cpp
     client/QXmppMessageReceiptManager.cpp
     client/QXmppMucManager.cpp
+	client/QXmppOmemoManager.cpp
     client/QXmppOutgoingClient.cpp
     client/QXmppRosterManager.cpp
     client/QXmppRegistrationManager.cpp
