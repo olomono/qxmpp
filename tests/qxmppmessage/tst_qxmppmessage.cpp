@@ -61,6 +61,7 @@ private slots:
     void testBobData();
     void testFallbackIndication();
     void testStanzaIds();
+    void testPubSubEvent();
 };
 
 void tst_QXmppMessage::testBasic_data()
@@ -1009,6 +1010,42 @@ void tst_QXmppMessage::testStanzaIds()
     msg2.setStanzaIdBy(QStringLiteral("server.tld"));
     msg2.setOriginId(QStringLiteral("5678"));
     serializePacket(msg2, xml);
+}
+
+void tst_QXmppMessage::testPubSubEvent()
+{
+    const QByteArray xml(
+        "<message id=\"foo\" to=\"francisco@denmark.lit\" from=\"pubsub.shakespeare.lit\" type=\"headline\">"
+            "<event xmlns=\"http://jabber.org/protocol/pubsub#event\">"
+                "<items node=\"princely_musings\">"
+                    "<item id=\"ae890ac52d0df67ed7cfdf51b644e901\">"
+                        "<entry xmlns=\"http://www.w3.org/2005/Atom\">"
+                            "<title>Soliloquy</title>"
+                            "<summary>"
+        "To be, or not to be: that is the question:"
+        "Whether &quot;tis nobler in the mind to suffer"
+        "The slings and arrows of outrageous fortune,"
+        "Or to take arms against a sea of troubles,"
+        "And by opposing end them?"
+                            "</summary>"
+                            "<link href=\"http://denmark.lit/2003/12/13/atom03\" rel=\"alternate\" type=\"text/html\"/>"
+                            "<id>tag:denmark.lit,2003:entry-32397</id>"
+                            "<published>2003-12-13T18:30:02Z</published>"
+                            "<updated>2003-12-13T18:30:02Z</updated>"
+                        "</entry>"
+                    "</item>"
+                "</items>"
+            "</event>"
+        "</message>");
+
+    QXmppMessage message;
+    parsePacket(message, xml);
+    QVERIFY(message.isPubSubEvent());
+    QCOMPARE(message.pubSubEvent().node(), QString("princely_musings"));
+    QCOMPARE(message.pubSubEvent().items().size(), 1);
+    QCOMPARE(message.pubSubEvent().items().first().id(), QString("ae890ac52d0df67ed7cfdf51b644e901"));
+    QCOMPARE(message.pubSubEvent().items().first().payload().firstChildElement("id").value(), QString("tag:denmark.lit,2003:entry-32397"));
+    serializePacket(message, xml);
 }
 
 QTEST_MAIN(tst_QXmppMessage)

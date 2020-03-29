@@ -3,6 +3,7 @@
  *
  * Author:
  *  Jeremy Lainé
+ *  Germán Márquez Mejía
  *
  * Source:
  *  https://github.com/qxmpp-project/qxmpp
@@ -30,10 +31,16 @@ class tst_QXmppPubSubIq : public QObject
 {
     Q_OBJECT
 
+private:
+    bool containsKeyValueField(const QList<QXmppDataForm::Field> fields, const QLatin1String &key, const QLatin1String &value);
+
 private slots:
     void testItems();
     void testItemsResponse();
+    void testCreateNode();
+    void testDeleteNode();
     void testPublish();
+    void testPublishWithOptions();
     void testRetractItem();
     void testSubscribe();
     void testSubscription();
@@ -113,6 +120,68 @@ void tst_QXmppPubSubIq::testItemsResponse()
     serializePacket(iq, xml);
 }
 
+void tst_QXmppPubSubIq::testCreateNode()
+{
+    const QByteArray xml(
+        "<iq id=\"create1\" to=\"pubsub.shakespeare.lit\" from=\"hamlet@denmark.lit/elsinore\" type=\"set\">"
+          "<pubsub xmlns=\"http://jabber.org/protocol/pubsub\">"
+            "<create node=\"princely_musings\"/>"
+          "</pubsub>"
+        "</iq>"
+    );
+
+    QXmppPubSubIq iq;
+    parsePacket(iq, xml);
+    QCOMPARE(iq.id(), QString("create1"));
+    QCOMPARE(iq.to(), QLatin1String("pubsub.shakespeare.lit"));
+    QCOMPARE(iq.from(), QLatin1String("hamlet@denmark.lit/elsinore"));
+    QCOMPARE(iq.type(), QXmppIq::Set);
+    QCOMPARE(iq.queryType(), QXmppPubSubIq::CreateQuery);
+    QCOMPARE(iq.queryJid(), {});
+    QCOMPARE(iq.queryNode(), QLatin1String("princely_musings"));
+    serializePacket(iq, xml);
+
+    iq = QXmppPubSubIq();
+    iq.setId(QLatin1String("create1"));
+    iq.setTo(QLatin1String("pubsub.shakespeare.lit"));
+    iq.setFrom(QLatin1String("hamlet@denmark.lit/elsinore"));
+    iq.setType(QXmppIq::Set);
+    iq.setQueryType(QXmppPubSubIq::CreateQuery);
+    iq.setQueryNode(QLatin1String("princely_musings"));
+    serializePacket(iq, xml);
+}
+
+void tst_QXmppPubSubIq::testDeleteNode()
+{
+    const QByteArray xml(
+        "<iq id=\"delete1\" to=\"pubsub.shakespeare.lit\" from=\"hamlet@denmark.lit/elsinore\" type=\"set\">"
+        "<pubsub xmlns=\"http://jabber.org/protocol/pubsub#owner\">"
+        "<delete node=\"princely_musings\"/>"
+        "</pubsub>"
+        "</iq>"
+        );
+
+    QXmppPubSubIq iq;
+    parsePacket(iq, xml);
+    QCOMPARE(iq.id(), QString("delete1"));
+    QCOMPARE(iq.to(), QLatin1String("pubsub.shakespeare.lit"));
+    QCOMPARE(iq.from(), QLatin1String("hamlet@denmark.lit/elsinore"));
+    QCOMPARE(iq.type(), QXmppIq::Set);
+    QCOMPARE(iq.queryType(), QXmppPubSubIq::DeleteQuery);
+    QCOMPARE(iq.queryJid(), {});
+    QCOMPARE(iq.queryNode(), QLatin1String("princely_musings"));
+    serializePacket(iq, xml);
+
+    iq = QXmppPubSubIq();
+    iq.setId(QLatin1String("delete1"));
+    iq.setTo(QLatin1String("pubsub.shakespeare.lit"));
+    iq.setFrom(QLatin1String("hamlet@denmark.lit/elsinore"));
+    iq.setType(QXmppIq::Set);
+    iq.setQueryType(QXmppPubSubIq::DeleteQuery);
+    iq.setQueryNode(QLatin1String("princely_musings"));
+    serializePacket(iq, xml);
+}
+
 void tst_QXmppPubSubIq::testPublish()
 {
     const QByteArray xml(
@@ -146,7 +215,7 @@ void tst_QXmppPubSubIq::testPublish()
     QCOMPARE(iq.queryType(), QXmppPubSubIq::PublishQuery);
     QCOMPARE(iq.queryJid(), QString());
     QCOMPARE(iq.queryNode(), QLatin1String("storage:bookmarks"));
-    QCOMPARE(iq.items().first().contents().tagName(), QLatin1String("storage"));
+    QCOMPARE(iq.items().first().payload().tagName(), QLatin1String("storage"));
     serializePacket(iq, xml);
 
     // serialize using setters
@@ -169,7 +238,7 @@ void tst_QXmppPubSubIq::testPublish()
 
     QXmppPubSubItem item;
     item.setId(QStringLiteral("current"));
-    item.setContents(itemContent);
+    item.setPayload(itemContent);
 
     iq = QXmppPubSubIq();
     iq.setId(QLatin1String("items1"));
@@ -181,6 +250,55 @@ void tst_QXmppPubSubIq::testPublish()
     iq.setQueryNode(QLatin1String("storage:bookmarks"));
     iq.setItems(QList<QXmppPubSubItem>() << item);
 
+    serializePacket(iq, xml);
+}
+
+void tst_QXmppPubSubIq::testPublishWithOptions()
+{
+    const QByteArray xml(
+        "<iq"
+        " id=\"items1\""
+        " to=\"pubsub.shakespeare.lit\""
+        " from=\"francisco@denmark.lit/barracks\""
+        " type=\"result\">"
+        "<pubsub xmlns=\"http://jabber.org/protocol/pubsub\">"
+        "<publish node=\"storage:bookmarks\">"
+        "<item id=\"current\">"
+        "<storage xmlns=\"storage:bookmarks\">"
+        "<conference"
+        " autojoin=\"true\""
+        " jid=\"theplay@conference.shakespeare.lit\""
+        " name=\"The Play's the Thing\">"
+        "<nick>JC</nick>"
+        "</conference>"
+        "</storage>"
+        "</item>"
+        "</publish>"
+        "<publish-options>"
+        "<x xmlns=\"jabber:x:data\" type=\"submit\">"
+        "<field type=\"hidden\" var=\"FORM_TYPE\">"
+        "<value>http://jabber.org/protocol/pubsub#publish-options</value>"
+        "</field>"
+        "<field type=\"text-single\" var=\"pubsub#access_model\">"
+        "<value>presence</value>"
+        "</field>"
+        "</x>"
+        "</publish-options>"
+        "</pubsub>"
+        "</iq>");
+
+    QXmppPubSubIq iq;
+    parsePacket(iq, xml);
+    QCOMPARE(iq.id(), QLatin1String("items1"));
+    QCOMPARE(iq.to(), QLatin1String("pubsub.shakespeare.lit"));
+    QCOMPARE(iq.from(), QLatin1String("francisco@denmark.lit/barracks"));
+    QCOMPARE(iq.type(), QXmppIq::Result);
+    QCOMPARE(iq.queryType(), QXmppPubSubIq::PublishQuery);
+    QCOMPARE(iq.queryJid(), QString());
+    QCOMPARE(iq.queryNode(), QLatin1String("storage:bookmarks"));
+    QCOMPARE(iq.publishOptions().type(), QXmppDataForm::Type::Submit);
+    QCOMPARE(iq.publishOptions().fields().size(), 2);
+    QVERIFY(containsKeyValueField(iq.publishOptions().fields(), QLatin1String("pubsub#access_model"), QLatin1String("presence")));
     serializePacket(iq, xml);
 }
 
@@ -345,6 +463,16 @@ void tst_QXmppPubSubIq::testIsPubSubIq()
     QDomElement element = doc.documentElement();
 
     QCOMPARE(QXmppPubSubIq::isPubSubIq(element), isValid);
+}
+
+bool tst_QXmppPubSubIq::containsKeyValueField(const QList<QXmppDataForm::Field> fields, const QLatin1String &key, const QLatin1String &value) {
+    for(QXmppDataForm::Field f : fields) {
+        if (f.key() == key && f.value() == value) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 QTEST_MAIN(tst_QXmppPubSubIq)

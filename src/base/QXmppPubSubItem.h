@@ -3,6 +3,7 @@
  *
  * Author:
  *  Jeremy Lainé
+ *  Germán Márquez Mejía
  *
  * Source:
  *  https://github.com/qxmpp-project/qxmpp
@@ -41,16 +42,19 @@ class QXMPP_EXPORT QXmppPubSubItem
 {
 public:
     QXmppPubSubItem();
-    QXmppPubSubItem(const QXmppPubSubItem &iq);
+    QXmppPubSubItem(const QXmppPubSubItem &other);
+    QXmppPubSubItem(const QString &id);
+    QXmppPubSubItem(const QXmppElement &payload);
+    QXmppPubSubItem(const QString &id, const QXmppElement &payload);
     ~QXmppPubSubItem();
 
-    QXmppPubSubItem &operator=(const QXmppPubSubItem &iq);
+    QXmppPubSubItem &operator=(const QXmppPubSubItem &other);
 
     QString id() const;
     void setId(const QString &id);
 
-    QXmppElement contents() const;
-    void setContents(const QXmppElement &contents);
+    QXmppElement payload() const;
+    void setPayload(const QXmppElement &payload);
 
     /// \cond
     void parse(const QDomElement &element);
@@ -61,4 +65,6 @@ private:
     QSharedDataPointer<QXmppPubSubItemPrivate> d;
 };
 
-#endif  // QXMPPPUBSUBITEM_H
+Q_DECLARE_TYPEINFO(QXmppPubSubItem, Q_MOVABLE_TYPE);
+
+#endif // QXMPPPUBSUBITEM_H

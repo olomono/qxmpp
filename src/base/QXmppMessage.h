@@ -26,6 +26,8 @@
 #ifndef QXMPPMESSAGE_H
 #define QXMPPMESSAGE_H
 
+#include "QXmppPubSubEvent.h"
+
 // Required for source compatibility
 #include "QXmppStanza.h"
 
@@ -218,6 +220,11 @@ public:
     // XEP-0428: Fallback Indication
     bool isFallback() const;
     void setIsFallback(bool isFallback);
+
+    // XEP-0060: Publish-Subscribe
+    bool isPubSubEvent() const;
+    QXmppPubSubEvent pubSubEvent() const;
+    void setPubSubEvent(const QXmppPubSubEvent&);
 
     /// \cond
     void parse(const QDomElement &element) override;

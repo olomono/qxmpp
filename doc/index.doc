@@ -1,4 +1,4 @@
-/*! \mainpage
+﻿/*! \mainpage
 
 QXmpp is a cross-platform C++ XMPP client library based on the Qt
 framework. It tries to use Qt's programming conventions in order to ease
@@ -25,6 +25,7 @@ extend QXmpp by subclassing QXmppClientExtension.
 - QXmppEntityTimeManager
 - QXmppUploadRequestManager
 - QXmppRegistrationManager
+- QXmppPubSubManager
 
 <B>XMPP stanzas:</B> If you are interested in a more low-level API, you can refer to these
 classes.

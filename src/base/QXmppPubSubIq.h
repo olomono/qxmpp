@@ -3,6 +3,7 @@
  *
  * Author:
  *  Jeremy Lainé
+ *  Germán Márquez Mejía
  *
  * Source:
  *  https://github.com/qxmpp-project/qxmpp
@@ -24,7 +25,9 @@
 #ifndef QXMPPPUBSUBIQ_H
 #define QXMPPPUBSUBIQ_H
 
+#include "QXmppDataForm.h"
 #include "QXmppIq.h"
+#include "QXmppPubSubItem.h"
 
 #include <QSharedDataPointer>
 
@@ -52,14 +55,16 @@ public:
         SubscribeQuery,
         SubscriptionQuery,
         SubscriptionsQuery,
-        UnsubscribeQuery
+        UnsubscribeQuery,
+        CreateQuery,
+        DeleteQuery
     };
 
     QXmppPubSubIq();
-    QXmppPubSubIq(const QXmppPubSubIq &iq);
+    QXmppPubSubIq(const QXmppPubSubIq &other);
     ~QXmppPubSubIq();
 
-    QXmppPubSubIq &operator=(const QXmppPubSubIq &iq);
+    QXmppPubSubIq &operator=(const QXmppPubSubIq &other);
 
     QXmppPubSubIq::QueryType queryType() const;
     void setQueryType(QXmppPubSubIq::QueryType queryType);
@@ -75,6 +80,9 @@ public:
 
     QString subscriptionId() const;
     void setSubscriptionId(const QString &id);
+
+    QXmppDataForm publishOptions() const;
+    void setPublishOptions(const QXmppDataForm &publishOptions);
 
     /// \cond
     static bool isPubSubIq(const QDomElement &element);

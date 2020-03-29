@@ -163,6 +163,9 @@ public:
 
     // XEP-0428: Fallback Indication
     bool isFallback;
+
+    // XEP-0060: Publish-Subscribe
+    QXmppPubSubEvent pubSubEvent;
 };
 
 QXmppMessagePrivate::QXmppMessagePrivate()
@@ -899,6 +902,27 @@ void QXmppMessage::setIsFallback(bool isFallback)
     d->isFallback = isFallback;
 }
 
+/// Returns true if the message contains a PubSub event.
+
+bool QXmppMessage::isPubSubEvent() const
+{
+    return !d->pubSubEvent.isNull();
+}
+
+/// Returns the PubSub event.
+
+QXmppPubSubEvent QXmppMessage::pubSubEvent() const
+{
+    return d->pubSubEvent;
+}
+
+/// Sets the PubSub event.
+
+void QXmppMessage::setPubSubEvent(const QXmppPubSubEvent &pubSubEvent)
+{
+    d->pubSubEvent = pubSubEvent;
+}
+
 /// \cond
 void QXmppMessage::parse(const QDomElement &element)
 {
@@ -1126,6 +1150,11 @@ void QXmppMessage::toXml(QXmlStreamWriter *xmlWriter) const
         xmlWriter->writeEndElement();
     }
 
+    // XEP-0060: Publish-Subscribe
+    if (!d->pubSubEvent.isNull()) {
+        d->pubSubEvent.toXml(xmlWriter);
+    }
+
     // other extensions
     QXmppStanza::extensionsToXml(xmlWriter);
 
@@ -1229,6 +1258,11 @@ void QXmppMessage::parseExtension(const QDomElement &element, QXmppElementList &
     } else if (checkElement(element, QStringLiteral("fallback"), ns_fallback_indication)) {
         // XEP-0428: Fallback Indication
         d->isFallback = true;
+        // XEP-0060: Publish-Subscribe
+    } else if (checkElement(element, QStringLiteral("event"), ns_pubsub_event)) {
+        QXmppPubSubEvent event;
+        event.parse(element);
+        d->pubSubEvent = event;
     } else {
         // other extensions
         unknownExtensions << QXmppElement(element);
