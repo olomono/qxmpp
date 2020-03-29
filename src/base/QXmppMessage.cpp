@@ -27,6 +27,7 @@
 
 #include "QXmppBitsOfBinaryDataList.h"
 #include "QXmppConstants_p.h"
+#include "QXmppPubSubEvent.h"
 #include "QXmppUtils.h"
 
 #include <QDateTime>
@@ -103,6 +104,9 @@ public:
     QString thread;
     QString parentThread;
     QXmppMessage::Type type;
+
+    // XEP-0060: Publish-Subscribe
+    QXmppPubSubEvent pubSubEvent;
 
     // XEP-0066: Out of Band Data
     QString outOfBandUrl;
@@ -308,6 +312,27 @@ QString QXmppMessage::parentThread() const
 void QXmppMessage::setParentThread(const QString &parent)
 {
     d->parentThread = parent;
+}
+
+/// Returns true if the message contains a PubSub event.
+
+bool QXmppMessage::isPubSubEvent() const
+{
+    return !d->pubSubEvent.isNull();
+}
+
+/// Returns the PubSub event.
+
+QXmppPubSubEvent QXmppMessage::pubSubEvent() const
+{
+    return d->pubSubEvent;
+}
+
+/// Sets the PubSub event.
+
+void QXmppMessage::setPubSubEvent(const QXmppPubSubEvent &pubSubEvent)
+{
+    d->pubSubEvent = pubSubEvent;
 }
 
 ///
@@ -1155,6 +1180,11 @@ void QXmppMessage::toXml(QXmlStreamWriter *xmlWriter) const
     }
     error().toXml(xmlWriter);
 
+    // XEP-0060: Publish-Subscribe
+    if (!d->pubSubEvent.isNull()) {
+        d->pubSubEvent.toXml(xmlWriter);
+    }
+
     // XEP-0066: Out of Band Data
     if (!d->outOfBandUrl.isEmpty()) {
         xmlWriter->writeStartElement(QStringLiteral("x"));
@@ -1352,6 +1382,11 @@ void QXmppMessage::parseExtension(const QDomElement &element, QXmppElementList &
 {
     if (element.tagName() == QStringLiteral("x")) {
         parseXElement(element, unknownExtensions);
+    } else if (checkElement(element, QStringLiteral("event"), ns_pubsub_event)) {
+        // XEP-0060: Publish-Subscribe
+        QXmppPubSubEvent event;
+        event.parse(element);
+        d->pubSubEvent = event;
     } else if (checkElement(element, QStringLiteral("html"), ns_xhtml_im)) {
         // XEP-0071: XHTML-IM
         QDomElement bodyElement = element.firstChildElement(QStringLiteral("body"));

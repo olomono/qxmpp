@@ -26,6 +26,8 @@
 #ifndef QXMPPMESSAGE_H
 #define QXMPPMESSAGE_H
 
+#include "QXmppPubSubEvent.h"
+
 // Required for source compatibility
 #include "QXmppStanza.h"
 
@@ -130,6 +132,11 @@ public:
 
     QXmppMessage::Type type() const;
     void setType(QXmppMessage::Type);
+
+    // XEP-0060: Publish-Subscribe
+    bool isPubSubEvent() const;
+    QXmppPubSubEvent pubSubEvent() const;
+    void setPubSubEvent(const QXmppPubSubEvent&);
 
     // XEP-0066: Out of Band Data
     QString outOfBandUrl() const;
