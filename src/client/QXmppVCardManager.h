@@ -3,6 +3,7 @@
  *
  * Author:
  *  Manjeet Dahiya
+ *  Melvin Keskin
  *
  * Source:
  *  https://github.com/qxmpp-project/qxmpp
@@ -61,12 +62,11 @@ public:
     ~QXmppVCardManager() override;
 
     QString requestVCard(const QString& bareJid = QString());
+    QString requestOwnVCard();
 
-    const QXmppVCardIq& clientVCard() const;
-    void setClientVCard(const QXmppVCardIq&);
-
-    QString requestClientVCard();
-    bool isClientVCardReceived() const;
+    bool isOwnVCardReceived() const;
+    const QXmppVCardIq& ownVCard() const;
+    void setOwnVCard(const QXmppVCardIq&);
 
     /// \cond
     QStringList discoveryFeatures() const override;
@@ -74,13 +74,21 @@ public:
     /// \endcond
 
 signals:
-    /// This signal is emitted when the requested vCard is received
-    /// after calling the requestVCard() function.
-    void vCardReceived(const QXmppVCardIq&);
+    /// Emitted when the requested vCard of a contact is received.
+    ///
+    void contactVCardReceived(const QXmppVCardIq&);
 
-    /// This signal is emitted when the client's vCard is received
-    /// after calling the requestClientVCard() function.
-    void clientVCardReceived();
+    /// Emitted when the user's own vCard is received.
+    ///
+    void ownVCardReceived(const QXmppVCardIq&);
+
+    /// Emitted when the requested vCard of a contact does not exist.
+    ///
+    void noContactVCardExists();
+
+    /// Emitted when the requested user's own vCard does not exist.
+    ///
+    void noOwnVCardExists();
 
 private:
     QXmppVCardManagerPrivate* d;

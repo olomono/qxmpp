@@ -3,6 +3,7 @@
  *
  * Author:
  *  Manjeet Dahiya
+ *  Melvin Keskin
  *
  * Source:
  *  https://github.com/qxmpp-project/qxmpp
@@ -31,14 +32,14 @@
 class QXmppVCardManagerPrivate
 {
 public:
-    QXmppVCardIq clientVCard;
-    bool isClientVCardReceived;
+    QXmppVCardIq ownVCard;
+    bool isOwnVCardReceived;
 };
 
 QXmppVCardManager::QXmppVCardManager()
     : d(new QXmppVCardManagerPrivate)
 {
-    d->isClientVCardReceived = false;
+    d->isOwnVCardReceived = false;
 }
 
 QXmppVCardManager::~QXmppVCardManager()
@@ -46,58 +47,58 @@ QXmppVCardManager::~QXmppVCardManager()
     delete d;
 }
 
-/// This function requests the server for vCard of the specified jid.
-/// Once received the signal vCardReceived() is emitted.
+/// Requests the vCard of a bare JID.
+/// Once received, either contactVCardReceived() or ownVCardReceived() is emitted.
 ///
-/// \param jid Jid of the specific entry in the roster
+/// \param bareJid bare Jid for which the vCard is requested
 ///
-QString QXmppVCardManager::requestVCard(const QString& jid)
+QString QXmppVCardManager::requestVCard(const QString& bareJid)
 {
-    QXmppVCardIq request(jid);
+    QXmppVCardIq request(bareJid);
     if (client()->sendPacket(request))
         return request.id();
     else
         return QString();
 }
 
-/// Returns the vCard of the connected client.
+/// Requests the vCard of the user whose client is connected.
+/// Once receivedn either contactVCardReceived or ownVCardReceived() is emitted.
+/// The received vCard can be retrieved by using ownVCard().
 ///
-/// \return QXmppVCard
-///
-const QXmppVCardIq& QXmppVCardManager::clientVCard() const
-{
-    return d->clientVCard;
-}
-
-/// Sets the vCard of the connected client.
-///
-/// \param clientVCard QXmppVCard
-///
-void QXmppVCardManager::setClientVCard(const QXmppVCardIq& clientVCard)
-{
-    d->clientVCard = clientVCard;
-    d->clientVCard.setTo("");
-    d->clientVCard.setFrom("");
-    d->clientVCard.setType(QXmppIq::Set);
-    client()->sendPacket(d->clientVCard);
-}
-
-/// This function requests the server for vCard of the connected user itself.
-/// Once received the signal clientVCardReceived() is emitted. Received vCard
-/// can be get using clientVCard().
-QString QXmppVCardManager::requestClientVCard()
+QString QXmppVCardManager::requestOwnVCard()
 {
     return requestVCard();
 }
 
-/// Returns true if vCard of the connected client has been
-/// received else false.
+/// Returns true if the vCard of the user whose client is connected has been received, otherwise false.
 ///
 /// \return bool
 ///
-bool QXmppVCardManager::isClientVCardReceived() const
+bool QXmppVCardManager::isOwnVCardReceived() const
 {
-    return d->isClientVCardReceived;
+    return d->isOwnVCardReceived;
+}
+
+/// Returns the vCard of the user whose client is connected.
+///
+/// \return QXmppVCard
+///
+const QXmppVCardIq& QXmppVCardManager::ownVCard() const
+{
+    return d->ownVCard;
+}
+
+/// Sets the vCard of the user whose client is connected.
+///
+/// \param clientVCard QXmppVCard
+///
+void QXmppVCardManager::setOwnVCard(const QXmppVCardIq& clientVCard)
+{
+    d->ownVCard = clientVCard;
+    d->ownVCard.setTo("");
+    d->ownVCard.setFrom("");
+    d->ownVCard.setType(QXmppIq::Set);
+    client()->sendPacket(d->ownVCard);
 }
 
 /// \cond
@@ -113,14 +114,37 @@ bool QXmppVCardManager::handleStanza(const QDomElement& element)
         QXmppVCardIq vCardIq;
         vCardIq.parse(element);
 
-        if (vCardIq.from().isEmpty()) {
-            d->clientVCard = vCardIq;
-            d->isClientVCardReceived = true;
-            emit clientVCardReceived();
+        if (vCardIq.type() == QXmppIq::Error && vCardIq.error().type() == QXmppIq::Error::Cancel) {
+            switch(vCardIq.error().condition()) {
+            case QXmppIq::Error::ServiceUnavailable:
+                emit noContactVCardExists();
+                return true;
+                break;
+            case QXmppIq::Error::ItemNotFound:
+                d->ownVCard = QXmppVCardIq();
+                emit noOwnVCardExists();
+                return true;
+                break;
+            default:
+                return false;
+            }
         }
 
-        emit vCardReceived(vCardIq);
+        if (vCardIq.from().isEmpty() || vCardIq.from() == client()->configuration().jidBare()) {
+            d->ownVCard = vCardIq;
 
+
+            if (vCardIq == QXmppVCardIq()) {
+                emit noOwnVCardExists();
+                return true;
+            }
+
+            d->isOwnVCardReceived = true;
+            emit ownVCardReceived(vCardIq);
+            return true;
+        }
+
+        emit contactVCardReceived(vCardIq);
         return true;
     }
 
