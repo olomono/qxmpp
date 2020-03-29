@@ -51,7 +51,7 @@ QXmppPubSubItem::QXmppPubSubItem(const QXmppPubSubItem &other) = default;
 
 QXmppPubSubItem::~QXmppPubSubItem() = default;
 
-/// \brief Assigns \a other to this item
+/// \brief Assigns \a other to this item.
 ///
 /// \param other
 
