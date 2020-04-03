@@ -22,6 +22,8 @@ QXmppOmemoElement::QXmppOmemoElement() : d(new QXmppOmemoElementPrivate) {}
 /// \param other
 QXmppOmemoElement::QXmppOmemoElement(const QXmppOmemoElement &other) : d(other.d) {}
 
+QXmppOmemoElement::~QXmppOmemoElement() = default;
+
 /// \brief Assigns \a other to this event
 ///
 /// \param other
@@ -113,7 +115,7 @@ void QXmppOmemoElement::toXml(QXmlStreamWriter *writer) const
     writer->writeStartElement("header");
     writer->writeAttribute("sid", QString::number(d->senderDeviceId));
 
-    const QList<QString> recipientJids = d->envelopes.keys();
+    const QList<QString> recipientJids = d->envelopes.uniqueKeys();
 
     for (QString recipientJid : recipientJids) {
         writer->writeStartElement("keys");

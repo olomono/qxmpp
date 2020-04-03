@@ -94,12 +94,12 @@ void QXmppOmemoDeviceBundle::setPublicSignedPreKeySignature(const QByteArray &si
     d->publicSignedPreKeySignature = signature;
 }
 
-QByteArrayList QXmppOmemoDeviceBundle::publicPreKeys() const
+QMap<quint64, QByteArray> QXmppOmemoDeviceBundle::publicPreKeys() const
 {
     return d->publicPreKeys;
 }
 
-void QXmppOmemoDeviceBundle::setPublicPreKeys(const QByteArrayList &keys)
+void QXmppOmemoDeviceBundle::setPublicPreKeys(const QMap<quint64, QByteArray> &keys)
 {
     d->publicPreKeys = keys;
 }

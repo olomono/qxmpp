@@ -27,7 +27,7 @@
 
 #include <QByteArray>
 #include <QMap>
-#include <QSharedData>
+#include <QSharedDataPointer>
 
 #include "QXmppStanza.h"
 

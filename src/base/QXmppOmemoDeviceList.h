@@ -25,7 +25,8 @@
 #ifndef QXMPPOMEMODEVICELIST_H
 #define QXMPPOMEMODEVICELIST_H
 
-#include <QSharedData>
+#include <QSet>
+#include <QSharedDataPointer>
 
 #include "QXmppOmemoDevice.h"
 #include "QXmppStanza.h"

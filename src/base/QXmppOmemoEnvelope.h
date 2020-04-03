@@ -26,13 +26,15 @@
 #ifndef QXMPPOMEMOENVELOPE_H
 #define QXMPPOMEMOENVELOPE_H
 
+//#include <QSharedDataPointer>
+
 #include "QXmppGlobal.h"
-class QXmppOmemoEnvelopePrivate;
 #include "QXmppStanza.h"
 
 class QDomElement;
-#include <QSharedData>
 class QXmlStreamWriter;
+
+class QXmppOmemoEnvelopePrivate;
 
 ///
 /// \brief The QXmppOmemoEnvelope class represents an OMEMO envelope.
@@ -42,7 +44,7 @@ class QXMPP_EXPORT QXmppOmemoEnvelope
 public:
     QXmppOmemoEnvelope();
     QXmppOmemoEnvelope(const QXmppOmemoEnvelope &other);
-    ~QXmppOmemoEnvelope() = default;
+    ~QXmppOmemoEnvelope();
 
     QXmppOmemoEnvelope& operator=(const QXmppOmemoEnvelope &other);
 

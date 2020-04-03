@@ -20,6 +20,8 @@ QXmppOmemoEnvelope::QXmppOmemoEnvelope() : d(new QXmppOmemoEnvelopePrivate) {}
 /// \param other
 QXmppOmemoEnvelope::QXmppOmemoEnvelope(const QXmppOmemoEnvelope &other) : d(other.d) {}
 
+QXmppOmemoEnvelope::~QXmppOmemoEnvelope() = default;
+
 /// \brief Assigns \a other to this event
 ///
 /// \param other
@@ -103,15 +105,16 @@ void QXmppOmemoEnvelope::parse(const QDomElement &element)
 
     d->data = QByteArray::fromBase64(element.text().toLatin1());
 }
-
+#include <QDebug>
 void QXmppOmemoEnvelope::toXml(QXmlStreamWriter *writer) const
 {
-    helperToXmlAddTextElement(writer, "key", d->data.toBase64());
+    writer->writeStartElement("key");
+    writer->writeAttribute("rid", QString::number(d->recipientDeviceId));
 
-    helperToXmlAddAttribute(writer, "rid", QString::number(d->recipientDeviceId));
     if (d->isUsedForKeyExchange)
         helperToXmlAddAttribute(writer, "kex", "true");
 
+    writer->writeCharacters(d->data.toBase64());
     writer->writeEndElement();
 }
 /// \endcond
