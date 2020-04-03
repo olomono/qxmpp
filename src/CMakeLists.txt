@@ -77,7 +77,6 @@ set(INSTALL_HEADER_FILES
     client/QXmppMamManager.h
     client/QXmppMessageReceiptManager.h
     client/QXmppMucManager.h
-	client/QXmppOmemoManager.cpp
     client/QXmppOutgoingClient.h
     client/QXmppRegistrationManager.h
     client/QXmppPubSubManager.h
@@ -169,7 +168,6 @@ set(SOURCE_FILES
     client/QXmppMamManager.cpp
     client/QXmppMessageReceiptManager.cpp
     client/QXmppMucManager.cpp
-	client/QXmppOmemoManager.cpp
     client/QXmppOutgoingClient.cpp
     client/QXmppRosterManager.cpp
     client/QXmppRegistrationManager.cpp
