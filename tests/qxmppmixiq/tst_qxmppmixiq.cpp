@@ -48,7 +48,7 @@ void tst_QXmppMixIq::testBase_data()
         "to=\"hag66@shakespeare.example\" "
         "from=\"hag66@shakespeare.example/UUID-a1j/7533\" "
         "type=\"set\">"
-        "<client-join xmlns=\"urn:xmpp:mix:pam:1\" channel=\"coven@mix.shakespeare.example\">"
+        "<client-join xmlns=\"urn:xmpp:mix:pam:2\" channel=\"coven@mix.shakespeare.example\">"
         "<join xmlns=\"urn:xmpp:mix:core:1\">"
         "<subscribe node=\"urn:xmpp:mix:nodes:messages\"/>"
         "<subscribe node=\"urn:xmpp:mix:nodes:presence\"/>"
@@ -76,7 +76,7 @@ void tst_QXmppMixIq::testBase_data()
         "to=\"hag66@shakespeare.example\" "
         "from=\"coven@mix.shakespeare.example\" "
         "type=\"result\">"
-        "<join xmlns=\"urn:xmpp:mix:core:1\" jid=\"123456#coven@mix.shakespeare.example\">"
+        "<join xmlns=\"urn:xmpp:mix:core:1\" id=\"123456\">"
         "<subscribe node=\"urn:xmpp:mix:nodes:messages\"/>"
         "<subscribe node=\"urn:xmpp:mix:nodes:presence\"/>"
         "<subscribe node=\"urn:xmpp:mix:nodes:participants\"/>"
@@ -89,9 +89,9 @@ void tst_QXmppMixIq::testBase_data()
         "to=\"hag66@shakespeare.example/UUID-a1j/7533\" "
         "from=\"hag66@shakespeare.example\" "
         "type=\"result\">"
-        "<client-join xmlns=\"urn:xmpp:mix:pam:1\">"
+        "<client-join xmlns=\"urn:xmpp:mix:pam:2\">"
         "<join xmlns=\"urn:xmpp:mix:core:1\" "
-        "jid=\"123456#coven@mix.shakespeare.example\">"
+        "id=\"123456\">"
         "<subscribe node=\"urn:xmpp:mix:nodes:messages\"/>"
         "<subscribe node=\"urn:xmpp:mix:nodes:presence\"/>"
         "<subscribe node=\"urn:xmpp:mix:nodes:participants\"/>"
@@ -104,7 +104,7 @@ void tst_QXmppMixIq::testBase_data()
         "to=\"hag66@shakespeare.example\" "
         "from=\"hag66@shakespeare.example/UUID-a1j/7533\" "
         "type=\"set\">"
-        "<client-leave xmlns=\"urn:xmpp:mix:pam:1\" channel=\"coven@mix.shakespeare.example\">"
+        "<client-leave xmlns=\"urn:xmpp:mix:pam:2\" channel=\"coven@mix.shakespeare.example\">"
         "<leave xmlns=\"urn:xmpp:mix:core:1\"/>"
         "</client-leave>"
         "</iq>");
@@ -127,7 +127,7 @@ void tst_QXmppMixIq::testBase_data()
         "to=\"hag66@shakespeare.example/UUID-a1j/7533\" "
         "from=\"hag66@shakespeare.example\" "
         "type=\"result\">"
-        "<client-leave xmlns=\"urn:xmpp:mix:pam:1\">"
+        "<client-leave xmlns=\"urn:xmpp:mix:pam:2\">"
         "<leave xmlns=\"urn:xmpp:mix:core:1\"/>"
         "</client-leave>"
         "</iq>");
@@ -138,6 +138,7 @@ void tst_QXmppMixIq::testBase_data()
         "type=\"set\">"
         "<update-subscription xmlns=\"urn:xmpp:mix:core:1\">"
         "<subscribe node=\"urn:xmpp:mix:nodes:messages\"/>"
+        "<unsubscribe node=\"urn:xmpp:mix:nodes:presence\"/>"
         "</update-subscription>"
         "</iq>");
     QByteArray updateSubscriptionResultXml(
@@ -145,8 +146,9 @@ void tst_QXmppMixIq::testBase_data()
         "to=\"hag66@shakespeare.example/UUID-a1j/7533\" "
         "from=\"hag66@shakespeare.example\" "
         "type=\"result\">"
-        "<update-subscription xmlns=\"urn:xmpp:mix:core:1\" jid=\"hag66@shakespeare.example\">"
+        "<update-subscription xmlns=\"urn:xmpp:mix:core:1\">"
         "<subscribe node=\"urn:xmpp:mix:nodes:messages\"/>"
+        "<unsubscribe node=\"urn:xmpp:mix:nodes:presence\"/>"
         "</update-subscription>"
         "</iq>");
     QByteArray setNickSetXml(
@@ -181,6 +183,13 @@ void tst_QXmppMixIq::testBase_data()
         "type=\"set\">"
         "<create xmlns=\"urn:xmpp:mix:core:1\"/>"
         "</iq>");
+    QByteArray createResultXml(
+        "<iq id=\"E6E10350-76CF-40C6-B91B-1EA08C332FC7\" "
+        "to=\"hag66@shakespeare.example/UUID-a1j/7533\" "
+        "from=\"hag66@shakespeare.example\" "
+        "type=\"result\">"
+        "<create xmlns=\"urn:xmpp:mix:core:1\" channel=\"coven\"/>"
+        "</iq>");
     QByteArray destroyXml(
         "<iq id=\"E6E10350-76CF-40C6-B91B-1EA08C332FC7\" "
         "to=\"hag66@shakespeare.example\" "
@@ -204,9 +213,11 @@ void tst_QXmppMixIq::testBase_data()
     QTest::addColumn<QByteArray>("xml");
     QTest::addColumn<QXmppIq::Type>("type");
     QTest::addColumn<QXmppMixIq::Type>("actionType");
-    QTest::addColumn<QString>("jid");
-    QTest::addColumn<QString>("channelName");
-    QTest::addColumn<QStringList>("nodes");
+    QTest::addColumn<QString>("channelJid");
+    QTest::addColumn<QString>("channelId");
+    QTest::addColumn<QString>("participantId");
+    QTest::addColumn<QStringList>("nodesBeingSubscribed");
+    QTest::addColumn<QStringList>("nodesBeingUnsubscribed");
     QTest::addColumn<QString>("nick");
 
     QTest::newRow("join-c2s-set")
@@ -215,7 +226,9 @@ void tst_QXmppMixIq::testBase_data()
         << QXmppMixIq::ClientJoin
         << "coven@mix.shakespeare.example"
         << ""
+        << ""
         << defaultNodes
+        << emptyNodes
         << "third witch";
     QTest::newRow("join-s2s-set")
         << joinS2sSetXml
@@ -223,102 +236,160 @@ void tst_QXmppMixIq::testBase_data()
         << QXmppMixIq::Join
         << ""
         << ""
+        << ""
         << defaultNodes
+        << emptyNodes
         << "stpeter";
     QTest::newRow("join-s2s-result")
         << joinS2sResultXml
         << QXmppIq::Result
         << QXmppMixIq::Join
-        << "123456#coven@mix.shakespeare.example"
         << ""
+        << ""
+        << "123456"
         << defaultNodes
+        << emptyNodes
         << "third witch";
     QTest::newRow("join-c2s-result")
         << joinC2sResultXml
         << QXmppIq::Result
         << QXmppMixIq::ClientJoin
-        << "123456#coven@mix.shakespeare.example"
         << ""
+        << ""
+        << "123456"
         << defaultNodes
+        << emptyNodes
         << "";
     QTest::newRow("leave-c2s-set")
         << leaveC2sSetXml
         << QXmppIq::Set
         << QXmppMixIq::ClientLeave
         << "coven@mix.shakespeare.example"
-        << "" << emptyNodes << "";
+        << ""
+        << ""
+        << emptyNodes
+        << emptyNodes
+        << "";
     QTest::newRow("leave-s2s-set")
         << leaveS2sSetXml
         << QXmppIq::Set
         << QXmppMixIq::Leave
         << ""
-        << "" << emptyNodes << "";
+        << ""
+        << ""
+        << emptyNodes
+        << emptyNodes
+        << "";
     QTest::newRow("leave-s2s-result")
         << leaveS2sResultXml
         << QXmppIq::Result
         << QXmppMixIq::Leave
         << ""
-        << "" << emptyNodes << "";
+        << ""
+        << ""
+        << emptyNodes
+        << emptyNodes
+        << "";
     QTest::newRow("leave-c2s-result")
         << leaveC2sResultXml
         << QXmppIq::Result
         << QXmppMixIq::ClientLeave
         << ""
-        << "" << emptyNodes << "";
+        << ""
+        << ""
+        << emptyNodes
+        << emptyNodes
+        << "";
     QTest::newRow("update-subscription-set")
         << updateSubscriptionSetXml
         << QXmppIq::Set
         << QXmppMixIq::UpdateSubscription
         << ""
         << ""
+        << ""
         << (QStringList() << "urn:xmpp:mix:nodes:messages")
+        << (QStringList() << "urn:xmpp:mix:nodes:presence")
         << "";
     QTest::newRow("update-subscription-result")
         << updateSubscriptionResultXml
         << QXmppIq::Result
         << QXmppMixIq::UpdateSubscription
-        << "hag66@shakespeare.example"
+        << ""
+        << ""
         << ""
         << (QStringList() << "urn:xmpp:mix:nodes:messages")
+        << (QStringList() << "urn:xmpp:mix:nodes:presence")
         << "";
     QTest::newRow("setnick-set")
         << setNickSetXml
         << QXmppIq::Set
         << QXmppMixIq::SetNick
         << ""
-        << "" << emptyNodes
+        << ""
+        << ""
+        << emptyNodes
+        << emptyNodes
         << "thirdwitch";
     QTest::newRow("setnick-result")
         << setNickResultXml
         << QXmppIq::Result
         << QXmppMixIq::SetNick
         << ""
-        << "" << emptyNodes
+        << ""
+        << ""
+        << emptyNodes
+        << emptyNodes
         << "thirdwitch";
     QTest::newRow("create")
         << createXml
         << QXmppIq::Set
         << QXmppMixIq::Create
         << ""
-        << "coven" << emptyNodes << "";
+        << "coven"
+        << ""
+        << emptyNodes
+        << emptyNodes
+        << "";
     QTest::newRow("create-without-name")
         << createWithoutNameXml
         << QXmppIq::Set
         << QXmppMixIq::Create
         << ""
-        << "" << emptyNodes << "";
+        << ""
+        << ""
+        << emptyNodes
+        << emptyNodes
+        << "";
+    QTest::newRow("create-result")
+        << createResultXml
+        << QXmppIq::Result
+        << QXmppMixIq::Create
+        << ""
+        << "coven"
+        << ""
+        << emptyNodes
+        << emptyNodes
+        << "";
     QTest::newRow("destroy")
         << destroyXml
         << QXmppIq::Set
         << QXmppMixIq::Destroy
         << ""
-        << "coven" << emptyNodes << "";
+        << "coven"
+        << ""
+        << emptyNodes
+        << emptyNodes
+        << "";
     QTest::newRow("empty")
         << emptyXml
         << QXmppIq::Set
         << QXmppMixIq::None
         << ""
-        << "" << emptyNodes << "";
+        << ""
+        << ""
+        << emptyNodes
+        << emptyNodes
+        << "";
 }
 
 void tst_QXmppMixIq::testBase()
@@ -326,18 +397,20 @@ void tst_QXmppMixIq::testBase()
     QFETCH(QByteArray, xml);
     QFETCH(QXmppIq::Type, type);
     QFETCH(QXmppMixIq::Type, actionType);
-    QFETCH(QString, jid);
-    QFETCH(QString, channelName);
-    QFETCH(QStringList, nodes);
+    QFETCH(QString, channelJid);
+    QFETCH(QString, channelId);
+    QFETCH(QStringList, nodesBeingSubscribed);
+    QFETCH(QStringList, nodesBeingUnsubscribed);
     QFETCH(QString, nick);
 
     QXmppMixIq iq;
     parsePacket(iq, xml);
     QCOMPARE(iq.type(), type);
     QCOMPARE(iq.actionType(), actionType);
-    QCOMPARE(iq.jid(), jid);
-    QCOMPARE(iq.channelName(), channelName);
-    QCOMPARE(iq.nodes(), nodes);
+    QCOMPARE(iq.channelJid(), channelJid);
+    QCOMPARE(iq.channelId(), channelId);
+    QCOMPARE(iq.nodesBeingSubscribed(), nodesBeingSubscribed);
+    QCOMPARE(iq.nodesBeingUnsubscribed(), nodesBeingUnsubscribed);
     QCOMPARE(iq.nick(), nick);
     serializePacket(iq, xml);
 }
@@ -346,9 +419,10 @@ void tst_QXmppMixIq::testDefaults()
 {
     QXmppMixIq iq;
     QCOMPARE(iq.actionType(), QXmppMixIq::None);
-    QCOMPARE(iq.jid(), QString());
-    QCOMPARE(iq.channelName(), QString());
-    QCOMPARE(iq.nodes(), QStringList());
+    QCOMPARE(iq.channelJid(), QString());
+    QCOMPARE(iq.channelId(), QString());
+    QCOMPARE(iq.nodesBeingSubscribed(), QStringList());
+    QCOMPARE(iq.nodesBeingUnsubscribed(), QStringList());
     QCOMPARE(iq.nick(), QString());
 }
 
@@ -357,12 +431,14 @@ void tst_QXmppMixIq::testSetters()
     QXmppMixIq iq;
     iq.setActionType(QXmppMixIq::Join);
     QCOMPARE(iq.actionType(), QXmppMixIq::Join);
-    iq.setJid("interestingnews@mix.example.com");
-    QCOMPARE(iq.jid(), QString("interestingnews@mix.example.com"));
-    iq.setChannelName("interestingnews");
-    QCOMPARE(iq.channelName(), QString("interestingnews"));
-    iq.setNodes(QStringList() << "com:example:mix:node:custom");
-    QCOMPARE(iq.nodes(), QStringList() << "com:example:mix:node:custom");
+    iq.setParticipantId("123456");
+    QCOMPARE(iq.participantId(), QString("123456"));
+    iq.setChannelId("interestingnews");
+    QCOMPARE(iq.channelId(), QString("interestingnews"));
+    iq.setNodesBeingSubscribed(QStringList() << "com:example:mix:node:custom");
+    QCOMPARE(iq.nodesBeingSubscribed(), QStringList() << "com:example:mix:node:custom");
+    iq.setNodesBeingUnsubscribed(QStringList() << "com:example:mix:node:custom");
+    QCOMPARE(iq.nodesBeingUnsubscribed(), QStringList() << "com:example:mix:node:custom");
     iq.setNick("SMUDO");
     QCOMPARE(iq.nick(), QString("SMUDO"));
 }
@@ -381,7 +457,7 @@ void tst_QXmppMixIq::testIsMixIq()
         "to=\"hag66@shakespeare.example\" "
         "from=\"hag66@shakespeare.example/UUID-a1j/7533\" "
         "type=\"set\">"
-        "<client-leave xmlns=\"urn:xmpp:mix:pam:1\" channel=\"coven@mix.shakespeare.example\">"
+        "<client-leave xmlns=\"urn:xmpp:mix:pam:2\" channel=\"coven@mix.shakespeare.example\">"
         "<leave xmlns=\"urn:xmpp:mix:core:1\"/>"
         "</client-leave>"
         "</iq>");

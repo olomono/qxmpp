@@ -35,6 +35,7 @@ set(INSTALL_HEADER_FILES
     base/QXmppLogger.h
     base/QXmppMamIq.h
     base/QXmppMessage.h
+    base/QXmppMixInvitation.h
     base/QXmppMixIq.h
     base/QXmppMixItem.h
     base/QXmppMucIq.h
@@ -73,6 +74,7 @@ set(INSTALL_HEADER_FILES
     client/QXmppInvokable.h
     client/QXmppMamManager.h
     client/QXmppMessageReceiptManager.h
+    client/QXmppMixManager.h
     client/QXmppMucManager.h
     client/QXmppOutgoingClient.h
     client/QXmppRegistrationManager.h
@@ -119,6 +121,7 @@ set(SOURCE_FILES
     base/QXmppLogger.cpp
     base/QXmppMamIq.cpp
     base/QXmppMessage.cpp
+    base/QXmppMixInvitation.cpp
     base/QXmppMixIq.cpp
     base/QXmppMixItem.cpp
     base/QXmppMucIq.cpp
@@ -161,6 +164,7 @@ set(SOURCE_FILES
     client/QXmppInvokable.cpp
     client/QXmppMamManager.cpp
     client/QXmppMessageReceiptManager.cpp
+    client/QXmppMixManager.cpp
     client/QXmppMucManager.cpp
     client/QXmppOutgoingClient.cpp
     client/QXmppRosterManager.cpp

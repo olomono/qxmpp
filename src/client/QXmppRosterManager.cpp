@@ -25,6 +25,7 @@
 #include "QXmppRosterManager.h"
 
 #include "QXmppClient.h"
+#include "QXmppMixManager.h"
 #include "QXmppPresence.h"
 #include "QXmppRosterIq.h"
 #include "QXmppUtils.h"
@@ -109,6 +110,10 @@ void QXmppRosterManager::_q_connected()
     QXmppRosterIq roster;
     roster.setType(QXmppIq::Get);
     roster.setFrom(client()->configuration().jid());
+
+    if (client()->findExtension<QXmppMixManager>())
+        roster.setMixAnnotate(true);
+
     d->rosterReqId = roster.id();
     if (client()->isAuthenticated())
         client()->sendPacket(roster);
@@ -353,6 +358,25 @@ QXmppRosterIq::Item QXmppRosterManager::getRosterEntry(
         return d->entries.value(bareJid);
     else
         return QXmppRosterIq::Item();
+}
+
+///
+/// Returns a roster entry for a MIX channel by the ID the user has in that channel.
+///
+/// \param mixParticipantId ID of the user in the MIX channel
+///
+/// \return a roster entry if one exists for the given participant ID, otherwise an empty entry
+///
+QXmppRosterIq::Item QXmppRosterManager::rosterEntryByMixParticipantId(const QString &mixParticipantId) const
+{
+    if (!mixParticipantId.isEmpty()) {
+        for (const QXmppRosterIq::Item &entry : qAsConst(d->entries)) {
+            if (entry.mixParticipantId() == mixParticipantId)
+                return entry;
+        }
+    }
+
+    return {};
 }
 
 /// Get all the associated resources with the given bareJid.

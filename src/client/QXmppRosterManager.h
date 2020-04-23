@@ -38,7 +38,7 @@ class QXmppRosterManagerPrivate;
 /// \brief The QXmppRosterManager class provides access to a connected client's
 /// roster.
 ///
-/// \note It's object should not be created using it's constructor. Instead
+/// \note Its object should not be created using its constructor. Instead
 /// \c QXmppClient::findExtension<QXmppRosterManager>() should be used to get
 /// the instantiated object of this class.
 ///
@@ -49,7 +49,7 @@ class QXmppRosterManagerPrivate;
 ///
 /// After the QXmpp connected successfully to the XMPP server the signal
 /// \c QXmppClient::connected() is emitted and the roster is requested from the
-/// server. Once QXmpp receives the roster the signal
+/// server. Once QXmpp receives the roster, the signal
 /// \c QXmppRosterManager::rosterReceived() is emitted and after that the
 /// methods of this class can be used to get the roster entries.
 ///
@@ -75,6 +75,7 @@ public:
     bool isRosterReceived() const;
     QStringList getRosterBareJids() const;
     QXmppRosterIq::Item getRosterEntry(const QString &bareJid) const;
+    QXmppRosterIq::Item rosterEntryByMixParticipantId(const QString &mixParticipantId) const;
 
     QStringList getResources(const QString &bareJid) const;
     QMap<QString, QXmppPresence> getAllPresencesForBareJid(

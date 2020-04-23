@@ -64,6 +64,7 @@ private slots:
     void testSlashMe_data();
     void testSlashMe();
     void testPubSubEvent();
+    void testMixInvitation();
 };
 
 void tst_QXmppMessage::testBasic_data()
@@ -1110,6 +1111,28 @@ void tst_QXmppMessage::testPubSubEvent()
     QCOMPARE(message.pubSubEvent().items().size(), 1);
     QCOMPARE(message.pubSubEvent().items().first().id(), QString("ae890ac52d0df67ed7cfdf51b644e901"));
     QCOMPARE(message.pubSubEvent().items().first().payload().firstChildElement("id").value(), QString("tag:denmark.lit,2003:entry-32397"));
+    serializePacket(message, xml);
+}
+
+void tst_QXmppMessage::testMixInvitation()
+{
+    const QByteArray xml(
+        "<message id=\"f5pp2toz\" to=\"cat@shakespeare.example\" from=\"hag66@shakespeare.example/UUID-h5z/0253\" type=\"normal\">"
+            "<body>Would you like to join the coven?</body>"
+            "<invitation xmlns=\"urn:xmpp:mix:misc:0\">"
+                "<inviter>hag66@shakespeare.example</inviter>"
+                "<invitee>cat@shakespeare.example</invitee>"
+                "<channel>coven@mix.shakespeare.example</channel>"
+                "<token>ABCDEF</token>"
+           "</invitation>"
+        "</message>"
+    );
+
+    QXmppMessage message;
+    parsePacket(message, xml);
+
+    QVERIFY(message.isMixInvitation());
+
     serializePacket(message, xml);
 }
 

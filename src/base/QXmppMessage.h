@@ -26,6 +26,7 @@
 #ifndef QXMPPMESSAGE_H
 #define QXMPPMESSAGE_H
 
+#include "QXmppMixInvitation.h"
 #include "QXmppPubSubEvent.h"
 
 // Required for source compatibility
@@ -249,6 +250,11 @@ public:
 
     QString spoilerHint() const;
     void setSpoilerHint(const QString &);
+
+    // XEP-0407: Mediated Information eXchange (MIX): Miscellaneous Capabilities
+    bool isMixInvitation() const;
+    QXmppMixInvitation mixInvitation() const;
+    void setMixInvitation(const QXmppMixInvitation &mixInvitation);
 
     // XEP-0428: Fallback Indication
     bool isFallback() const;

@@ -175,6 +175,8 @@ extern const char* ns_mix_node_participants;
 extern const char* ns_mix_node_presence;
 extern const char* ns_mix_node_config;
 extern const char* ns_mix_node_info;
+extern const char* ns_mix_node_allowed;
+extern const char* ns_mix_node_banned;
 // XEP-0373: OpenPGP for XMPP
 extern const char* ns_ox;
 // XEP-0380: Explicit Message Encryption
@@ -185,8 +187,11 @@ extern const char* ns_spoiler;
 extern const char* ns_omemo;
 // XEP-0405: Mediated Information eXchange (MIX): Participant Server Requirements
 extern const char* ns_mix_pam;
+extern const char* ns_mix_pam_archiving;
 extern const char* ns_mix_roster;
 extern const char* ns_mix_presence;
+// XEP-0407: Mediated Information eXchange (MIX): Miscellaneous Capabilities
+extern const char* ns_mix_misc;
 // XEP-0428: Fallback Indication
 extern const char* ns_fallback_indication;
 

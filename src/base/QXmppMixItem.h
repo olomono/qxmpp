@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 The QXmpp developers
+ * Copyright (C) 2008-2021 The QXmpp developers
  *
  * Author:
  *  Linus Jahn
@@ -25,6 +25,7 @@
 #define QXMPPMIXITEM_H
 
 #include "QXmppElement.h"
+#include "QXmppPubSubItem.h"
 
 #include <QSharedDataPointer>
 
@@ -39,10 +40,11 @@ class QXmppMixParticipantItemPrivate;
 ///
 /// \ingroup Stanzas
 
-class QXMPP_EXPORT QXmppMixInfoItem
+class QXMPP_EXPORT QXmppMixInfoItem : public QXmppPubSubItem
 {
 public:
     QXmppMixInfoItem();
+    QXmppMixInfoItem(const QXmppPubSubItem &pubSubItem);
     QXmppMixInfoItem(const QXmppMixInfoItem &);
     ~QXmppMixInfoItem();
 
@@ -57,10 +59,11 @@ public:
     QStringList contactJids() const;
     void setContactJids(const QStringList &);
 
-    void parse(const QXmppElement &itemContent);
+    void parse(const QXmppElement &element);
     QXmppElement toElement() const;
 
     static bool isMixChannelInfo(const QDomElement &);
+    static bool isMixInfoItem(QXmppPubSubItem &pubSubItem);
 
 private:
     QSharedDataPointer<QXmppMixInfoItemPrivate> d;
@@ -74,14 +77,16 @@ private:
 ///
 /// \ingroup Stanzas
 
-class QXMPP_EXPORT QXmppMixParticipantItem
+class QXMPP_EXPORT QXmppMixParticipantItem : public QXmppPubSubItem
 {
 public:
     QXmppMixParticipantItem();
+    QXmppMixParticipantItem(const QXmppPubSubItem &pubSubItem);
     QXmppMixParticipantItem(const QXmppMixParticipantItem &);
     ~QXmppMixParticipantItem();
 
     QXmppMixParticipantItem &operator=(const QXmppMixParticipantItem &);
+    bool operator==(const QXmppMixParticipantItem &participantItem) const;
 
     QString nick() const;
     void setNick(const QString &);
@@ -89,10 +94,11 @@ public:
     QString jid() const;
     void setJid(const QString &);
 
-    void parse(const QXmppElement &itemContent);
+    void parse(const QXmppElement &element);
     QXmppElement toElement() const;
 
     static bool isMixParticipantItem(const QDomElement &);
+    static bool isMixParticipantItem(const QXmppPubSubItem &pubSubItem);
 
 private:
     QSharedDataPointer<QXmppMixParticipantItemPrivate> d;

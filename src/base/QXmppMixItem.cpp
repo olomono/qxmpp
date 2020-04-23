@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2020 The QXmpp developers
+ * Copyright (C) 2008-2021 The QXmpp developers
  *
  * Author:
  *  Linus Jahn
@@ -42,6 +42,12 @@ public:
 QXmppMixInfoItem::QXmppMixInfoItem()
     : d(new QXmppMixInfoItemPrivate)
 {
+}
+
+QXmppMixInfoItem::QXmppMixInfoItem(const QXmppPubSubItem &pubSubItem)
+	: QXmppPubSubItem(pubSubItem)
+{
+    parse(pubSubItem.payload());
 }
 
 QXmppMixInfoItem::QXmppMixInfoItem(const QXmppMixInfoItem&) = default;
@@ -104,6 +110,11 @@ bool QXmppMixInfoItem::isMixChannelInfo(const QDomElement& element)
             return field.value() == ns_mix;
     }
     return false;
+}
+
+bool QXmppMixInfoItem::isMixInfoItem(QXmppPubSubItem &pubSubItem)
+{
+    return isMixChannelInfo(pubSubItem.payload().sourceDomElement());
 }
 
 void QXmppMixInfoItem::parse(const QXmppElement& element)
@@ -174,11 +185,22 @@ QXmppMixParticipantItem::QXmppMixParticipantItem()
 {
 }
 
+QXmppMixParticipantItem::QXmppMixParticipantItem(const QXmppPubSubItem &pubSubItem)
+    : QXmppPubSubItem(pubSubItem), d(new QXmppMixParticipantItemPrivate)
+{
+    parse(pubSubItem.payload());
+}
+
+bool QXmppMixParticipantItem::operator==(const QXmppMixParticipantItem &participantItem) const
+{
+	return id() == participantItem.id();
+}
+
 QXmppMixParticipantItem::QXmppMixParticipantItem(const QXmppMixParticipantItem&) = default;
 
-QXmppMixParticipantItem& QXmppMixParticipantItem::operator=(const QXmppMixParticipantItem&) = default;
-
 QXmppMixParticipantItem::~QXmppMixParticipantItem() = default;
+
+QXmppMixParticipantItem& QXmppMixParticipantItem::operator=(const QXmppMixParticipantItem&) = default;
 
 /// Returns the participant's nickname.
 
@@ -208,10 +230,10 @@ void QXmppMixParticipantItem::setJid(const QString& jid)
     d->jid = jid;
 }
 
-void QXmppMixParticipantItem::parse(const QXmppElement& itemContent)
+void QXmppMixParticipantItem::parse(const QXmppElement &element)
 {
-    d->nick = itemContent.firstChildElement(QStringLiteral("nick")).value();
-    d->jid = itemContent.firstChildElement(QStringLiteral("jid")).value();
+    d->nick = element.firstChildElement(QStringLiteral("nick")).value();
+    d->jid = element.firstChildElement(QStringLiteral("jid")).value();
 }
 
 QXmppElement QXmppMixParticipantItem::toElement() const
@@ -238,4 +260,9 @@ QXmppElement QXmppMixParticipantItem::toElement() const
 bool QXmppMixParticipantItem::isMixParticipantItem(const QDomElement& element)
 {
     return element.tagName() == QStringLiteral("participant") && element.namespaceURI() == ns_mix;
+}
+
+bool QXmppMixParticipantItem::isMixParticipantItem(const QXmppPubSubItem &pubSubItem)
+{
+    return isMixParticipantItem(pubSubItem.payload().sourceDomElement());
 }
