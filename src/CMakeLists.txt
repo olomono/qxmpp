@@ -42,6 +42,7 @@ set(INSTALL_HEADER_FILES
     base/QXmppOmemoDevice.h
     base/QXmppOmemoDeviceBundle.h
     base/QXmppOmemoDeviceList.h
+    base/QXmppOmemoDeviceListElement.h
     base/QXmppOmemoElement.h
     base/QXmppOmemoEnvelope.h
     base/QXmppPingIq.h
@@ -129,6 +130,7 @@ set(SOURCE_FILES
     base/QXmppOmemoDevice.cpp
     base/QXmppOmemoDeviceBundle.cpp
     base/QXmppOmemoDeviceList.cpp
+    base/QXmppOmemoDeviceListElement.cpp
     base/QXmppOmemoElement.cpp
     base/QXmppOmemoEnvelope.cpp
     base/QXmppPingIq.cpp

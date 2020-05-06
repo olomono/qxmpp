@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 The QXmpp developers
+ * Copyright (C) 2008-2020 The QXmpp developers
  *
  * Author:
  *  Germán Márquez Mejía
@@ -21,7 +21,6 @@
  * Lesser General Public License for more details.
  *
  */
-
 
 #ifndef QXMPPOMEMOELEMENT_H
 #define QXMPPOMEMOELEMENT_H

@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef QXMPPOMEMODEVICE_H
-#define QXMPPOMEMODEVICE_H
+#ifndef QXMPPOMEMODEVICELISTELEMENT_H
+#define QXMPPOMEMODEVICELISTELEMENT_H
 
 #include <QByteArray>
 #include <QString>
@@ -31,19 +31,19 @@
 
 #include "QXmppStanza.h"
 
-class QXmppOmemoDevicePrivate;
+class QXmppOmemoDeviceListElementPrivate;
 
 ///
-/// \brief The QXmppOmemoDevice class represents an OMEMO device.
+/// \brief The QXmppOmemoDeviceListElement class represents an element of the OMEMO device list.
 ///
-class QXMPP_EXPORT QXmppOmemoDevice
+class QXMPP_EXPORT QXmppOmemoDeviceListElement
 {
 public:
-    QXmppOmemoDevice();
-    QXmppOmemoDevice(const QXmppOmemoDevice &other);
-    ~QXmppOmemoDevice() = default;
+    QXmppOmemoDeviceListElement();
+    QXmppOmemoDeviceListElement(const QXmppOmemoDeviceListElement &other);
+    ~QXmppOmemoDeviceListElement() = default;
 
-    QXmppOmemoDevice& operator=(const QXmppOmemoDevice &other);
+    QXmppOmemoDeviceListElement& operator=(const QXmppOmemoDeviceListElement &other);
 
     quint32 id() const;
     void setId(const quint32 id);
@@ -51,25 +51,18 @@ public:
     QString label() const;
     void setLabel(const QString &label);
 
-    QString jid() const;
-    void setJid(const QString &jid);
+     bool operator==(const QXmppOmemoDeviceListElement &other);
+     uint qHash();
 
-    QByteArray publicIdentityKey() const;
-    void setPublicIdentityKey(const QByteArray &key);
-
-    QByteArray session() const;
-    void setSession(const QByteArray &session);
-
-    quint32 trustLevel() const;
-    void setTrustLevel(const quint32 level);
-
-    quint32 status() const;
-    void setStatus(const quint32 status);
+     /// \cond
+     void parse(const QDomElement &element);
+     void toXml(QXmlStreamWriter *writer) const;
+     /// \endcond
 
 private:
-    QSharedDataPointer<QXmppOmemoDevicePrivate> d;
+    QSharedDataPointer<QXmppOmemoDeviceListElementPrivate> d;
 };
 
-Q_DECLARE_TYPEINFO(QXmppOmemoDevice, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(QXmppOmemoDeviceListElement, Q_MOVABLE_TYPE);
 
-#endif // QXMPPOMEMODEVICE_H
+#endif // QXMPPOMEMODEVICELISTELEMENT_H

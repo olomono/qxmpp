@@ -23,38 +23,94 @@
  */
 
 #include <QObject>
-#include "QXmppOmemoEnvelope.h"
+#include "QXmppOmemoDeviceBundle.h"
+#include "QXmppOmemoDeviceList.h"
+#include "QXmppOmemoDeviceListElement.h"
 #include "util.h"
 
-Q_DECLARE_METATYPE(QXmppOmemoEnvelope);
+Q_DECLARE_METATYPE(QXmppOmemoDeviceBundle);
 
 class tst_QXmppOmemoData : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void initTestCase();
-
-    void testOmemoElement_data();
-    void testOmemoElement();
-
-private:
+    void testOmemoDeviceBundle();
+    void testOmemoDeviceList();
 };
 
-void tst_QXmppOmemoData::initTestCase()
+void tst_QXmppOmemoData::testOmemoDeviceBundle()
 {
+    const QByteArray xml(
+        "<bundle xmlns='urn:xmpp:omemo:1'>"
+          "<spk id='0'>Oy5TSG9vVVV4Wz9wUkUvI1lUXiVLIU5bbGIsUV0wRngK</spk>"
+          "<spks>PTEoSk91VnRZSXBzcFlPXy4jZ3NKcGVZZ2d3YVJbVj8K</spks>"
+          "<ik>a012U0R9WixWKUYhYipucnZOWG06akFOR3Q1NGNOOmUK</ik>"
+          "<prekeys>"
+            "<pk id='0'>eDM2cnBiTmo4MmRGQ1RYTkZ0YnVwajJtNWdPdzkxZ0gK</pk>"
+            "<pk id='1'>aDRHdkcxNDNYUmJSNWVObnNWd0RCSzE1QlVKVGQ1RVEK</pk>"
+            "<pk id='99'>YlNLNFZJWDU2Z1hlUFZPRHg2VXZPQTE1VmFYUlFNWEQK</pk>"
+          "</prekeys>"
+        "</bundle>"
+    );
+
+    QMap<quint64, QByteArray> expectedPublicPreKeys = {
+        {0, QByteArray::fromBase64("eDM2cnBiTmo4MmRGQ1RYTkZ0YnVwajJtNWdPdzkxZ0gK")},
+        {1, QByteArray::fromBase64("a012U0R9WixWKUYhYipucnZOWG06akFOR3Q1NGNOOmUK")},
+        {99, QByteArray::fromBase64("YlNLNFZJWDU2Z1hlUFZPRHg2VXZPQTE1VmFYUlFNWEQK")}
+    };
+
+    QXmppOmemoDeviceBundle bundle;
+    parsePacket(bundle, xml);
+
+    QCOMPARE(bundle.publicSignedPreKeyId(), 0);
+    QCOMPARE(bundle.publicSignedPreKey().toBase64(), "Oy5TSG9vVVV4Wz9wUkUvI1lUXiVLIU5bbGIsUV0wRngK");
+    QCOMPARE(bundle.publicSignedPreKeySignature().toBase64(), "PTEoSk91VnRZSXBzcFlPXy4jZ3NKcGVZZ2d3YVJbVj8K");
+    QCOMPARE(bundle.publicIdentityKey().toBase64(), "a012U0R9WixWKUYhYipucnZOWG06akFOR3Q1NGNOOmUK");
+    QCOMPARE(bundle.publicPreKeys(), expectedPublicPreKeys);
+
+    serializePacket(bundle, xml);
+
+    bundle = QXmppOmemoDeviceBundle();
+    bundle.setPublicSignedPreKeyId(0);
+    bundle.setPublicSignedPreKey(QByteArray::fromBase64("Oy5TSG9vVVV4Wz9wUkUvI1lUXiVLIU5bbGIsUV0wRngK"));
+    bundle.setPublicSignedPreKeySignature(QByteArray::fromBase64("PTEoSk91VnRZSXBzcFlPXy4jZ3NKcGVZZ2d3YVJbVj8K"));
+    bundle.setPublicIdentityKey(QByteArray::fromBase64("a012U0R9WixWKUYhYipucnZOWG06akFOR3Q1NGNOOmUK"));
+    bundle.setPublicPreKeys(expectedPublicPreKeys);
+
+    serializePacket(bundle, xml);
 }
 
-void tst_QXmppOmemoData::testOmemoElement_data()
+void tst_QXmppOmemoData::testOmemoDeviceList()
 {
-//    QTest::addColumn<QString>("xml");
+    const QByteArray xml(
+        "<devices xmlns='urn:xmpp:omemo:1'>"
+          "<device id='12345' label='Dino on Lenovo Thinkpad T495'/>"
+          "<device id='4223'/>"
+          "<device id='31415' label='Conversations on Pixel 3'/>"
+        "</devices>"
+    );
 
-//    QTest::addRow("validOmemoElement")
-}
+    QMap<quint32, QString> expectedDeviceListElements = {
+        {12345, "Dino on Lenovo Thinkpad T495"},
+        {4223, {}},
+        {31415, "Conversations on Pixel 3"}
+    };
 
-void tst_QXmppOmemoData::testOmemoElement()
-{
+    QXmppOmemoDeviceList deviceList;
+    parsePacket(deviceList, xml);
 
+    for (quint32 expectedOmemoDeviceListElementKey : expectedDeviceListElements.keys()) {
+        // TODO: QCOMPARE(deviceListElement, expectedDeviceListELement);
+    }
+
+    serializePacket(deviceList, xml);
+
+    deviceList = QXmppOmemoDeviceList();
+
+    // TODO: Add setters
+
+    serializePacket(deviceList, xml);
 }
 
 QTEST_MAIN(tst_QXmppOmemoData)

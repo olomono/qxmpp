@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 The QXmpp developers
+ * Copyright (C) 2008-2020 The QXmpp developers
  *
  * Author:
  *  Germán Márquez Mejía
@@ -28,16 +28,32 @@ class QXmppOmemoDeviceListPrivate : public QSharedData {};
 
 QXmppOmemoDeviceList::QXmppOmemoDeviceList() : d(new QXmppOmemoDeviceListPrivate) {}
 
+///
 /// \brief Constructs a copy of \a other.
 ///
 /// \param other
+///
 QXmppOmemoDeviceList::QXmppOmemoDeviceList(const QXmppOmemoDeviceList &other) : d(other.d) {}
 
-/// \brief Assigns \a other to this event
+QXmppOmemoDeviceList::~QXmppOmemoDeviceList() = default;
+
+///
+/// \brief Assigns \a other to this device list
 ///
 /// \param other
+///
 QXmppOmemoDeviceList &QXmppOmemoDeviceList::operator=(const QXmppOmemoDeviceList &other)
 {
     d = other.d;
     return *this;
+}
+
+void QXmppOmemoDeviceList::parse(const QDomElement &element)
+{
+    // TODO: Implement
+}
+
+void QXmppOmemoDeviceList::toXml(QXmlStreamWriter *writer) const
+{
+    // TODO: Implement
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2019 The QXmpp developers
+ * Copyright (C) 2008-2020 The QXmpp developers
  *
  * Author:
  *  Germán Márquez Mejía
@@ -29,6 +29,7 @@
 #include <QSharedDataPointer>
 
 #include "QXmppOmemoDevice.h"
+#include "QXmppOmemoDeviceListElement.h"
 #include "QXmppStanza.h"
 
 class QXmppOmemoDeviceListPrivate;
@@ -36,13 +37,19 @@ class QXmppOmemoDeviceListPrivate;
 ///
 /// \brief The QXmppOmemoDeviceList class represents an OMEMO device list.
 ///
-class QXMPP_EXPORT QXmppOmemoDeviceList : public QSet<quint32>
+class QXMPP_EXPORT QXmppOmemoDeviceList : public QSet<QXmppOmemoDeviceListElement>
 {
+public:
     QXmppOmemoDeviceList();
     QXmppOmemoDeviceList(const QXmppOmemoDeviceList &other);
-    ~QXmppOmemoDeviceList() = default;
+    ~QXmppOmemoDeviceList();
 
     QXmppOmemoDeviceList& operator=(const QXmppOmemoDeviceList &other);
+
+    /// \cond
+    void parse(const QDomElement &element);
+    void toXml(QXmlStreamWriter *writer) const;
+    /// \endcond
 
 private:
     QSharedDataPointer<QXmppOmemoDeviceListPrivate> d;
