@@ -50,6 +50,7 @@ set(INSTALL_HEADER_FILES
     base/QXmppPubSubEvent.h
     base/QXmppPubSubIq.h
     base/QXmppPubSubItem.h
+    base/QXmppPubSubSubscribeOptions.cpp
     base/QXmppPubSubSubscription.h
     base/QXmppPubSubSubAuthorization.h
     base/QXmppPushEnableIq.h
@@ -140,6 +141,7 @@ set(SOURCE_FILES
     base/QXmppPubSubEvent.cpp
     base/QXmppPubSubIq.cpp
     base/QXmppPubSubItem.cpp
+    base/QXmppPubSubSubscribeOptions.cpp
     base/QXmppPubSubSubscription.cpp
     base/QXmppPubSubSubAuthorization.cpp
     base/QXmppPushEnableIq.cpp
