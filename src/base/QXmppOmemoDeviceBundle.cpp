@@ -24,7 +24,10 @@
 
 #include <QByteArray>
 #include <QMap>
+
+#include "QXmppConstants_p.h"
 #include "QXmppOmemoDeviceBundle.h"
+#include "QXmppUtils.h"
 
 class QXmppOmemoDeviceBundlePrivate : public QSharedData
 {
@@ -42,6 +45,8 @@ QXmppOmemoDeviceBundle::QXmppOmemoDeviceBundle() : d(new QXmppOmemoDeviceBundleP
 ///
 /// \param other
 QXmppOmemoDeviceBundle::QXmppOmemoDeviceBundle(const QXmppOmemoDeviceBundle &other) : d(other.d) {}
+
+QXmppOmemoDeviceBundle::~QXmppOmemoDeviceBundle() = default;
 
 /// \brief Assigns \a other to this event
 ///
@@ -102,4 +107,32 @@ QMap<quint64, QByteArray> QXmppOmemoDeviceBundle::publicPreKeys() const
 void QXmppOmemoDeviceBundle::setPublicPreKeys(const QMap<quint64, QByteArray> &keys)
 {
     d->publicPreKeys = keys;
+}
+
+void QXmppOmemoDeviceBundle::parse(const QDomElement &element)
+{
+    // TODO: Implement
+}
+
+void QXmppOmemoDeviceBundle::toXml(QXmlStreamWriter *writer) const
+{
+    writer->writeStartElement("bundle");
+    writer->writeNamespace(ns_omemo);
+
+    writer->writeStartElement("spk");
+    writer->writeAttribute("id", QString::number(publicSignedPreKeyId()));
+    writer->writeCharacters(publicSignedPreKey().toBase64());
+    writer->writeEndElement();
+
+    writer->writeStartElement("spks");
+    writer->writeCharacters(publicSignedPreKeySignature().toBase64());
+    writer->writeEndElement();
+
+    writer->writeStartElement("ik");
+    writer->writeCharacters(publicIdentityKey().toBase64());
+    writer->writeEndElement();
+
+    // TODO: Implement "<prekeys>"
+
+    writer->writeEndElement(); // bundle
 }

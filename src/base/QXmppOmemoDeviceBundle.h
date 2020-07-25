@@ -41,7 +41,7 @@ class QXMPP_EXPORT QXmppOmemoDeviceBundle
 public:
     QXmppOmemoDeviceBundle();
     QXmppOmemoDeviceBundle(const QXmppOmemoDeviceBundle &other);
-    ~QXmppOmemoDeviceBundle() = default;
+    ~QXmppOmemoDeviceBundle();
 
     QXmppOmemoDeviceBundle& operator=(const QXmppOmemoDeviceBundle &other);
 
