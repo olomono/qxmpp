@@ -91,18 +91,16 @@ void tst_QXmppOmemoData::testOmemoDeviceList()
         "</devices>"
     );
 
-    QMap<quint32, QString> expectedDeviceListElements = {
-        {12345, "Dino on Lenovo Thinkpad T495"},
-        {4223, {}},
-        {31415, "Conversations on Pixel 3"}
+    QSet<QXmppOmemoDeviceListElement> expectedDeviceListElements = {
+        QXmppOmemoDeviceListElement {12345, "Dino on Lenovo Thinkpad T495"},
+        QXmppOmemoDeviceListElement {4223, {}},
+        QXmppOmemoDeviceListElement {31415, "Conversations on Pixel 3"}
     };
 
     QXmppOmemoDeviceList deviceList;
     parsePacket(deviceList, xml);
 
-    for (quint32 expectedOmemoDeviceListElementKey : expectedDeviceListElements.keys()) {
-        // TODO: QCOMPARE(deviceListElement, expectedDeviceListELement);
-    }
+    QCOMPARE(deviceList, expectedDeviceListElements);
 
     serializePacket(deviceList, xml);
 
