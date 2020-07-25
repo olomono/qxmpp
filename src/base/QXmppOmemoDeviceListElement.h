@@ -40,8 +40,9 @@ class QXMPP_EXPORT QXmppOmemoDeviceListElement
 {
 public:
     QXmppOmemoDeviceListElement();
+    QXmppOmemoDeviceListElement(const quint32 id, const QString label);
     QXmppOmemoDeviceListElement(const QXmppOmemoDeviceListElement &other);
-    ~QXmppOmemoDeviceListElement() = default;
+    ~QXmppOmemoDeviceListElement();
 
     QXmppOmemoDeviceListElement& operator=(const QXmppOmemoDeviceListElement &other);
 
@@ -51,17 +52,24 @@ public:
     QString label() const;
     void setLabel(const QString &label);
 
-     bool operator==(const QXmppOmemoDeviceListElement &other);
-     uint qHash();
-
-     /// \cond
-     void parse(const QDomElement &element);
-     void toXml(QXmlStreamWriter *writer) const;
-     /// \endcond
+    /// \cond
+    void parse(const QDomElement &element);
+    void toXml(QXmlStreamWriter *writer) const;
+    /// \endcond
 
 private:
     QSharedDataPointer<QXmppOmemoDeviceListElementPrivate> d;
 };
+
+inline bool operator==(const QXmppOmemoDeviceListElement &e1, const QXmppOmemoDeviceListElement &e2)
+{
+    return e1.id() == e2.id();
+}
+
+inline uint qHash(const QXmppOmemoDeviceListElement &key, uint seed)
+{
+    return qHash(key.id(), seed);
+}
 
 Q_DECLARE_TYPEINFO(QXmppOmemoDeviceListElement, Q_MOVABLE_TYPE);
 

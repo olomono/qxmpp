@@ -22,14 +22,13 @@
  *
  */
 
+#include <QDomElement>
 #include <QMultiMap>
 
 #include "QXmppOmemoElement.h"
 
 #include "QXmppConstants_p.h"
 #include "QXmppUtils.h"
-
-#include <QDomElement>
 
 class QXmppOmemoElementPrivate : public QSharedData
 {
@@ -145,9 +144,7 @@ void QXmppOmemoElement::toXml(QXmlStreamWriter *writer) const
         writer->writeStartElement("keys");
         writer->writeAttribute("jid", recipientJid);
 
-        QList<QXmppOmemoEnvelope> envelopes = d->envelopes.values(recipientJid);
-
-        for (QXmppOmemoEnvelope envelope : envelopes)
+        for (const auto envelope : d->envelopes.values(recipientJid))
             envelope.toXml(writer);
 
         writer->writeEndElement(); // keys

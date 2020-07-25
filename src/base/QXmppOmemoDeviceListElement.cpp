@@ -22,6 +22,8 @@
  *
  */
 
+#include <QDomElement>
+
 #include "QXmppOmemoDeviceListElement.h"
 
 class QXmppOmemoDeviceListElementPrivate : public QSharedData
@@ -33,10 +35,17 @@ public:
 
 QXmppOmemoDeviceListElement::QXmppOmemoDeviceListElement() : d(new QXmppOmemoDeviceListElementPrivate) {}
 
+QXmppOmemoDeviceListElement::QXmppOmemoDeviceListElement(const quint32 id, const QString label) : QXmppOmemoDeviceListElement() {
+    d->id = id;
+    d->label = label;
+}
+
 /// \brief Constructs a copy of \a other.
 ///
 /// \param other
 QXmppOmemoDeviceListElement::QXmppOmemoDeviceListElement(const QXmppOmemoDeviceListElement &other) : d(other.d) {}
+
+QXmppOmemoDeviceListElement::~QXmppOmemoDeviceListElement() = default;
 
 /// \brief Assigns \a other to this event
 ///
@@ -67,22 +76,18 @@ void QXmppOmemoDeviceListElement::setLabel(const QString &label)
     d->label = label;
 }
 
-inline bool QXmppOmemoDeviceListElement::operator==(const QXmppOmemoDeviceListElement &other)
-{
-    return d->id == other.id();
-}
-
-inline uint QXmppOmemoDeviceListElement::qHash()
-{
-    return d->id;
-}
-
 void QXmppOmemoDeviceListElement::parse(const QDomElement &element)
 {
-    // TODO: Implement
+    d->id = element.attribute("id").toUInt();
+    d->label = element.attribute("label");
 }
 
 void QXmppOmemoDeviceListElement::toXml(QXmlStreamWriter *writer) const
 {
-    // TODO: Implement
+    writer->writeStartElement("device");
+
+    writer->writeAttribute("id", QString::number(d->id));
+    writer->writeAttribute("label", d->label);
+
+    writer->writeEndElement();
 }

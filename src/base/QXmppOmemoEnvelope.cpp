@@ -129,7 +129,7 @@ void QXmppOmemoEnvelope::parse(const QDomElement &element)
 
     d->data = QByteArray::fromBase64(element.text().toLatin1());
 }
-#include <QDebug>
+
 void QXmppOmemoEnvelope::toXml(QXmlStreamWriter *writer) const
 {
     writer->writeStartElement("key");

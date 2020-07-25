@@ -22,6 +22,9 @@
  *
  */
 
+#include <QDomElement>
+
+#include "QXmppConstants_p.h"
 #include "QXmppOmemoDeviceList.h"
 
 class QXmppOmemoDeviceListPrivate : public QSharedData {};
@@ -50,10 +53,25 @@ QXmppOmemoDeviceList &QXmppOmemoDeviceList::operator=(const QXmppOmemoDeviceList
 
 void QXmppOmemoDeviceList::parse(const QDomElement &element)
 {
-    // TODO: Implement
+    QDomElement device = element.firstChildElement("device");
+
+    while (!device.isNull()) {
+        QXmppOmemoDeviceListElement deviceListElement;
+        deviceListElement.parse(device);
+        this->insert(deviceListElement);
+
+        device = device.nextSiblingElement("device");
+    }
 }
 
 void QXmppOmemoDeviceList::toXml(QXmlStreamWriter *writer) const
 {
-    // TODO: Implement
+    writer->writeStartElement("devices");
+    writer->writeNamespace(ns_omemo);
+
+    for (const auto device : this->values()) {
+        device.toXml(writer);
+    }
+
+    writer->writeEndElement();
 }
