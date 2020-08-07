@@ -133,6 +133,11 @@ public:
     QXmppMessage::Type type() const;
     void setType(QXmppMessage::Type);
 
+    // XEP-0060: Publish-Subscribe
+    bool isPubSubEvent() const;
+    QXmppPubSubEvent pubSubEvent() const;
+    void setPubSubEvent(const QXmppPubSubEvent&);
+
     // XEP-0066: Out of Band Data
     QString outOfBandUrl() const;
     void setOutOfBandUrl(const QString &);
@@ -248,11 +253,6 @@ public:
     // XEP-0428: Fallback Indication
     bool isFallback() const;
     void setIsFallback(bool isFallback);
-
-    // XEP-0060: Publish-Subscribe
-    bool isPubSubEvent() const;
-    QXmppPubSubEvent pubSubEvent() const;
-    void setPubSubEvent(const QXmppPubSubEvent&);
 
     /// \cond
     void parse(const QDomElement &element) override;

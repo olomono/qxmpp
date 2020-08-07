@@ -35,6 +35,20 @@
 #include "QXmppPubSubItem.h"
 #endif
 
+static const QStringList PUBSUB_QUERIES = {
+    QStringLiteral("affiliations"),
+    QStringLiteral("default"),
+    QStringLiteral("items"),
+    QStringLiteral("publish"),
+    QStringLiteral("retract"),
+    QStringLiteral("subscribe"),
+    QStringLiteral("subscription"),
+    QStringLiteral("subscriptions"),
+    QStringLiteral("unsubscribe"),
+    QStringLiteral("create"),
+    QStringLiteral("delete"),
+};
+
 class QXmppPubSubIqPrivate;
 
 ///

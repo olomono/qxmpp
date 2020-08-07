@@ -25,10 +25,12 @@
 
 #include "QXmppConstants_p.h"
 #include "QXmppPubSubEvent.h"
+#include "QXmppPubSubIq.h"
 
 class QXmppPubSubEventPrivate : public QSharedData
 {
 public:
+    QXmppPubSubIq::QueryType type;
     QString nodeName;
     QList<QXmppPubSubItem> items;
 };
@@ -56,6 +58,26 @@ QXmppPubSubEvent &QXmppPubSubEvent::operator=(const QXmppPubSubEvent &other)
 {
     d = other.d;
     return *this;
+}
+
+///
+/// Returns the type of this event.
+///
+/// \return the event's type
+///
+QXmppPubSubIq::QueryType QXmppPubSubEvent::type() const
+{
+    return d->type;
+}
+
+///
+/// Sets the type of this event.
+///
+/// \param type the event's type
+///
+void QXmppPubSubEvent::setType(const QXmppPubSubIq::QueryType type)
+{
+    d->type = type;
 }
 
 ///
@@ -111,12 +133,21 @@ bool QXmppPubSubEvent::isNull() const
 /// \cond
 void QXmppPubSubEvent::parse(const QDomElement &element)
 {
+    QDomElement nodeElement = element.firstChildElement();
+
+    int type = PUBSUB_QUERIES.indexOf(nodeElement.tagName());
+    if (type > -1)
+        d->type = QXmppPubSubIq::QueryType(type);
+
     // parse node name
-    QDomElement itemsElement = element.firstChildElement("items");
-    d->nodeName = itemsElement.attribute("node");
+    d->nodeName = nodeElement.attribute("node");
+
+    if (type != QXmppPubSubIq::ItemsQuery)
+        return;
 
     // parse items
-    QDomElement childElement = itemsElement.firstChildElement("item");
+    QDomElement childElement = nodeElement.firstChildElement();
+
     while (!childElement.isNull())
     {
         QXmppPubSubItem item;
@@ -131,8 +162,10 @@ void QXmppPubSubEvent::toXml(QXmlStreamWriter *writer) const
     writer->writeStartElement("event");
     writer->writeAttribute("xmlns", ns_pubsub_event);
 
+    // write node element
+    writer->writeStartElement(PUBSUB_QUERIES.at(d->type));
+
     // write node name
-    writer->writeStartElement("items");
     writer->writeAttribute("node", d->nodeName);
 
     // write items

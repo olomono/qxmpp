@@ -137,7 +137,7 @@ void tst_QXmppPubSubIq::testCreateNode()
     QCOMPARE(iq.from(), QLatin1String("hamlet@denmark.lit/elsinore"));
     QCOMPARE(iq.type(), QXmppIq::Set);
     QCOMPARE(iq.queryType(), QXmppPubSubIq::CreateQuery);
-    QCOMPARE(iq.queryJid(), {});
+    QCOMPARE(iq.queryJid(), QString());
     QCOMPARE(iq.queryNodeName(), QLatin1String("princely_musings"));
     serializePacket(iq, xml);
 
@@ -168,7 +168,7 @@ void tst_QXmppPubSubIq::testDeleteNode()
     QCOMPARE(iq.from(), QLatin1String("hamlet@denmark.lit/elsinore"));
     QCOMPARE(iq.type(), QXmppIq::Set);
     QCOMPARE(iq.queryType(), QXmppPubSubIq::DeleteQuery);
-    QCOMPARE(iq.queryJid(), {});
+    QCOMPARE(iq.queryJid(), QString());
     QCOMPARE(iq.queryNodeName(), QLatin1String("princely_musings"));
     serializePacket(iq, xml);
 

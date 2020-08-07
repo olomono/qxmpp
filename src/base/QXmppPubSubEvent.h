@@ -27,6 +27,7 @@
 #include <QSharedData>
 
 #include "QXmppElement.h"
+#include "QXmppPubSubIq.h"
 #include "QXmppPubSubItem.h"
 
 class QXmppPubSubEventPrivate;
@@ -43,6 +44,9 @@ public:
     ~QXmppPubSubEvent();
 
     QXmppPubSubEvent& operator=(const QXmppPubSubEvent &other);
+
+    QXmppPubSubIq::QueryType type() const;
+    void setType(const QXmppPubSubIq::QueryType type);
 
     QString nodeName() const;
     void setNodeName(const QString &nodeName);

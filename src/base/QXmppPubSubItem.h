@@ -42,6 +42,11 @@ class QXmppPubSubItemPrivate;
 class QXMPP_EXPORT QXmppPubSubItem
 {
 public:
+    enum Type {
+        Item,
+        Retract
+    };
+
     QXmppPubSubItem();
     QXmppPubSubItem(const QXmppPubSubItem &other);
     QXmppPubSubItem(const QString &id);
@@ -50,6 +55,9 @@ public:
     ~QXmppPubSubItem();
 
     QXmppPubSubItem &operator=(const QXmppPubSubItem &other);
+
+    Type type() const;
+    void setType(const QXmppPubSubItem::Type type);
 
     QString id() const;
     void setId(const QString &id);
