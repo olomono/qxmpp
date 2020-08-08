@@ -28,6 +28,7 @@ set(INSTALL_HEADER_FILES
     base/QXmppBookmarkSet.h
     base/QXmppByteStreamIq.h
     base/QXmppDataForm.h
+    base/QXmppDataFormBased.h
     base/QXmppDiscoveryIq.h
     base/QXmppElement.h
     base/QXmppEntityTimeIq.h
@@ -50,6 +51,7 @@ set(INSTALL_HEADER_FILES
     base/QXmppPubSubIq.h
     base/QXmppPubSubItem.h
     base/QXmppPubSubSubscription.h
+    base/QXmppPubSubSubAuthorization.h
     base/QXmppPushEnableIq.h
     base/QXmppRegisterIq.h
     base/QXmppResultSet.h
@@ -115,6 +117,7 @@ set(SOURCE_FILES
     base/QXmppByteStreamIq.cpp
     base/QXmppConstants.cpp
     base/QXmppDataForm.cpp
+    base/QXmppDataFormBase.cpp
     base/QXmppDiscoveryIq.cpp
     base/QXmppElement.cpp
     base/QXmppEntityTimeIq.cpp
@@ -138,6 +141,7 @@ set(SOURCE_FILES
     base/QXmppPubSubIq.cpp
     base/QXmppPubSubItem.cpp
     base/QXmppPubSubSubscription.cpp
+    base/QXmppPubSubSubAuthorization.cpp
     base/QXmppPushEnableIq.cpp
     base/QXmppRegisterIq.cpp
     base/QXmppResultSet.cpp
