@@ -25,6 +25,7 @@
 #include "QXmppRosterManager.h"
 
 #include "QXmppClient.h"
+#include "QXmppMixManager.h"
 #include "QXmppPresence.h"
 #include "QXmppRosterIq.h"
 #include "QXmppUtils.h"
@@ -121,6 +122,10 @@ void QXmppRosterManager::_q_connected()
         QXmppRosterIq roster;
         roster.setType(QXmppIq::Get);
         roster.setFrom(client()->configuration().jid());
+
+        if (client()->findExtension<QXmppMixManager>())
+            roster.setMixAnnotate(true);
+
         d->rosterReqId = roster.id();
         if (client()->isAuthenticated())
             client()->sendPacket(roster);
