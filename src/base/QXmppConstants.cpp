@@ -163,6 +163,8 @@ const char* ns_mix_node_participants = "urn:xmpp:mix:nodes:participants";
 const char* ns_mix_node_presence = "urn:xmpp:mix:nodes:presence";
 const char* ns_mix_node_config = "urn:xmpp:mix:nodes:config";
 const char* ns_mix_node_info = "urn:xmpp:mix:nodes:info";
+const char* ns_mix_node_allowed = "urn:xmpp:mix:nodes:allowed";
+const char* ns_mix_node_banned = "urn:xmpp:mix:nodes:banned";
 // XEP-0373: OpenPGP for XMPP
 const char* ns_ox = "urn:xmpp:openpgp:0";
 // XEP-0380: Explicit Message Encryption
@@ -172,7 +174,8 @@ const char* ns_spoiler = "urn:xmpp:spoiler:0";
 // XEP-0384: OMEMO Encryption
 const char* ns_omemo = "eu.siacs.conversations.axolotl";
 // XEP-0405: Mediated Information eXchange (MIX): Participant Server Requirements
-const char* ns_mix_pam = "urn:xmpp:mix:pam:1";
+const char* ns_mix_pam = "urn:xmpp:mix:pam:2";
+const char* ns_mix_pam_archiving = "'urn:xmpp:mix:pam:2#archive";
 const char* ns_mix_roster = "urn:xmpp:mix:roster:0";
 const char* ns_mix_presence = "urn:xmpp:presence:0";
 // XEP-0428: Fallback Indication

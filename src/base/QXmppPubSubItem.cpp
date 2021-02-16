@@ -29,9 +29,15 @@
 
 #include <QDomElement>
 
+static const QStringList TYPES = {
+    QStringLiteral("item"),
+    QStringLiteral("retract")
+};
+
 class QXmppPubSubItemPrivate : public QSharedData
 {
 public:
+    QXmppPubSubItem::Type type = QXmppPubSubItem::Item;
     QString id;
     QXmppElement payload;
 };
@@ -92,6 +98,16 @@ QXmppPubSubItem::QXmppPubSubItem(const QString &id, const QXmppElement &payload)
     d->payload = payload;
 }
 
+QXmppPubSubItem::Type QXmppPubSubItem::type() const
+{
+    return d->type;
+}
+
+void QXmppPubSubItem::setType(const QXmppPubSubItem::Type type)
+{
+    d->type = type;
+}
+
 ///
 /// Returns the ID of the PubSub item.
 ///
@@ -131,13 +147,17 @@ void QXmppPubSubItem::setPayload(const QXmppElement &payload)
 /// \cond
 void QXmppPubSubItem::parse(const QDomElement &element)
 {
+    int type = TYPES.indexOf(element.tagName());
+    if (type > -1)
+        d->type = Type(type);
+
     d->id = element.attribute(QStringLiteral("id"));
     d->payload = QXmppElement(element.firstChildElement());
 }
 
 void QXmppPubSubItem::toXml(QXmlStreamWriter *writer) const
 {
-    writer->writeStartElement(QStringLiteral("item"));
+    writer->writeStartElement(TYPES.at(d->type));
 
     if (!d->id.isEmpty())
         helperToXmlAddAttribute(writer, QStringLiteral("id"), d->id);

@@ -63,26 +63,32 @@ public:
     QXmppMixIq::Type actionType() const;
     void setActionType(QXmppMixIq::Type);
 
-    QString jid() const;
-    void setJid(const QString &);
+    QString participantId() const;
+    void setParticipantId(const QString &participantId);
 
-    QString channelName() const;
-    void setChannelName(const QString &);
+    QString channelId() const;
+    void setChannelId(const QString &channelId);
 
-    QStringList nodes() const;
-    void setNodes(const QStringList &);
+    QString channelJid() const;
+    void setChannelJid(const QString &channelJid);
+
+    QStringList nodesBeingSubscribed() const;
+    void setNodesBeingSubscribed(const QStringList &nodes);
+
+    QStringList nodesBeingUnsubscribed() const;
+    void setNodesBeingUnsubscribed(const QStringList &nodes);
 
     QString nick() const;
-    void setNick(const QString &);
+    void setNick(const QString &nick);
 
     /// \cond
-    static bool isMixIq(const QDomElement &);
+    static bool isMixIq(const QDomElement &element);
     /// \endcond
 
 protected:
     /// \cond
-    void parseElementFromChild(const QDomElement &) override;
-    void toXmlElementFromChild(QXmlStreamWriter *) const override;
+    void parseElementFromChild(const QDomElement &element) override;
+    void toXmlElementFromChild(QXmlStreamWriter *writer) const override;
     /// \endcond
 
 private:
