@@ -38,15 +38,27 @@ public:
     QString token;
 };
 
+///
+/// Default constructor
+///
 QXmppMixInvitation::QXmppMixInvitation()
     : d(new QXmppMixInvitationPrivate)
 {
 }
 
+///
+/// Copy constructor
+///
 QXmppMixInvitation::QXmppMixInvitation(const QXmppMixInvitation &other) = default;
 
+///
+/// Default assignment operator.
+///
 QXmppMixInvitation &QXmppMixInvitation::operator=(const QXmppMixInvitation &other) = default;
 
+///
+/// Destructor
+///
 QXmppMixInvitation::~QXmppMixInvitation() = default;
 
 ///
@@ -131,6 +143,7 @@ void QXmppMixInvitation::setToken(const QString &token)
     d->token = token;
 }
 
+/// \cond
 void QXmppMixInvitation::parse(const QDomElement &element)
 {
     d->inviterJid = element.firstChildElement(QStringLiteral("inviter")).text();
@@ -151,6 +164,7 @@ void QXmppMixInvitation::toXml(QXmlStreamWriter *writer) const
 
     writer->writeEndElement();
 }
+/// \endcond
 
 ///
 /// Determines whether the given DOM element is a MIX invitation.

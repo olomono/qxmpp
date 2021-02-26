@@ -60,8 +60,10 @@ public:
     QString token() const;
     void setToken(const QString &token);
 
+    /// \cond
     void parse(const QDomElement &element);
     void toXml(QXmlStreamWriter *writer) const;
+    /// \endcond
 
     static bool isMixInvitation(const QDomElement &element);
 
