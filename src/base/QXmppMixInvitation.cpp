@@ -23,11 +23,11 @@
 
 #include "QXmppMixInvitation.h"
 
-#include <QDomElement>
-#include <QSharedData>
-
 #include "QXmppConstants_p.h"
 #include "QXmppUtils.h"
+
+#include <QDomElement>
+#include <QSharedData>
 
 class QXmppMixInvitationPrivate : public QSharedData
 {
@@ -176,5 +176,5 @@ void QXmppMixInvitation::toXml(QXmlStreamWriter *writer) const
 bool QXmppMixInvitation::isMixInvitation(const QDomElement &element)
 {
     return element.tagName() == QStringLiteral("invitation") &&
-           element.namespaceURI() == ns_mix_misc;
+        element.namespaceURI() == ns_mix_misc;
 }

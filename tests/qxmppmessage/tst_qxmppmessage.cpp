@@ -1082,15 +1082,14 @@ void tst_QXmppMessage::testMixInvitation()
 {
     const QByteArray xml(
         "<message id=\"f5pp2toz\" to=\"cat@shakespeare.example\" from=\"hag66@shakespeare.example/UUID-h5z/0253\" type=\"normal\">"
-            "<body>Would you like to join the coven?</body>"
-            "<invitation xmlns=\"urn:xmpp:mix:misc:0\">"
-                "<inviter>hag66@shakespeare.example</inviter>"
-                "<invitee>cat@shakespeare.example</invitee>"
-                "<channel>coven@mix.shakespeare.example</channel>"
-                "<token>ABCDEF</token>"
-           "</invitation>"
-        "</message>"
-    );
+        "<body>Would you like to join the coven?</body>"
+        "<invitation xmlns=\"urn:xmpp:mix:misc:0\">"
+        "<inviter>hag66@shakespeare.example</inviter>"
+        "<invitee>cat@shakespeare.example</invitee>"
+        "<channel>coven@mix.shakespeare.example</channel>"
+        "<token>ABCDEF</token>"
+        "</invitation>"
+        "</message>");
 
     QXmppMessage message;
     parsePacket(message, xml);

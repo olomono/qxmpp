@@ -23,10 +23,9 @@
 
 #include "QXmppMixInvitation.h"
 
+#include "util.h"
 #include <QDomDocument>
 #include <QObject>
-
-#include "util.h"
 
 class tst_QXmppMixInvitation : public QObject
 {
@@ -41,12 +40,11 @@ void tst_QXmppMixInvitation::testInvitation()
 {
     const QByteArray xml(
         "<invitation xmlns=\"urn:xmpp:mix:misc:0\">"
-            "<inviter>hag66@shakespeare.example</inviter>"
-            "<invitee>cat@shakespeare.example</invitee>"
-            "<channel>coven@mix.shakespeare.example</channel>"
-            "<token>ABCDEF</token>"
-        "</invitation>"
-    );
+        "<inviter>hag66@shakespeare.example</inviter>"
+        "<invitee>cat@shakespeare.example</invitee>"
+        "<channel>coven@mix.shakespeare.example</channel>"
+        "<token>ABCDEF</token>"
+        "</invitation>");
 
     QXmppMixInvitation invitation;
     parsePacket(invitation, xml);
@@ -76,36 +74,33 @@ void tst_QXmppMixInvitation::testIsInvitation()
 
     const QByteArray correctInvitationWithNamespace(
         "<invitation xmlns=\"urn:xmpp:mix:misc:0\">"
-            "<inviter>hag66@shakespeare.example</inviter>"
-            "<invitee>cat@shakespeare.example</invitee>"
-            "<channel>coven@mix.shakespeare.example</channel>"
-            "<token>ABCDEF</token>"
-        "</invitation>"
-    );
+        "<inviter>hag66@shakespeare.example</inviter>"
+        "<invitee>cat@shakespeare.example</invitee>"
+        "<channel>coven@mix.shakespeare.example</channel>"
+        "<token>ABCDEF</token>"
+        "</invitation>");
     QCOMPARE(doc.setContent(correctInvitationWithNamespace, true), true);
     element = doc.documentElement();
     QVERIFY(QXmppMixInvitation::isMixInvitation(element));
 
     const QByteArray invitationWithoutNamespace(
         "<invitation>"
-            "<inviter>hag66@shakespeare.example</inviter>"
-            "<invitee>cat@shakespeare.example</invitee>"
-            "<channel>coven@mix.shakespeare.example</channel>"
-            "<token>ABCDEF</token>"
-        "</invitation>"
-    );
+        "<inviter>hag66@shakespeare.example</inviter>"
+        "<invitee>cat@shakespeare.example</invitee>"
+        "<channel>coven@mix.shakespeare.example</channel>"
+        "<token>ABCDEF</token>"
+        "</invitation>");
     QCOMPARE(doc.setContent(invitationWithoutNamespace, true), true);
     element = doc.documentElement();
     QVERIFY(!QXmppMixInvitation::isMixInvitation(element));
 
     const QByteArray invitationWithIncorrectNamespace(
         "<invitation xmlns=\"urn:xmpp:example\">"
-            "<inviter>hag66@shakespeare.example</inviter>"
-            "<invitee>cat@shakespeare.example</invitee>"
-            "<channel>coven@mix.shakespeare.example</channel>"
-            "<token>ABCDEF</token>"
-        "</invitation>"
-    );
+        "<inviter>hag66@shakespeare.example</inviter>"
+        "<invitee>cat@shakespeare.example</invitee>"
+        "<channel>coven@mix.shakespeare.example</channel>"
+        "<token>ABCDEF</token>"
+        "</invitation>");
     QCOMPARE(doc.setContent(invitationWithIncorrectNamespace, true), true);
     element = doc.documentElement();
     QVERIFY(!QXmppMixInvitation::isMixInvitation(element));

@@ -24,9 +24,9 @@
 #ifndef QXMPPMIXINVITATION_H
 #define QXMPPMIXINVITATION_H
 
-#include <QSharedDataPointer>
-
 #include "QXmppElement.h"
+
+#include <QSharedDataPointer>
 
 class QXmppMixInvitationPrivate;
 
