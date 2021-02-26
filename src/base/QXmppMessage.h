@@ -26,11 +26,15 @@
 #ifndef QXMPPMESSAGE_H
 #define QXMPPMESSAGE_H
 
-// Required for source compatibility
 #include "QXmppStanza.h"
 
+// Required for source compatibility
 #include <QDateTime>
 
+namespace std {
+template<typename T>
+class optional;
+}
 class QXmppMessagePrivate;
 class QXmppBitsOfBinaryDataList;
 class QXmppMixInvitation;

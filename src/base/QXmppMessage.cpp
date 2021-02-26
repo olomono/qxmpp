@@ -30,6 +30,8 @@
 #include "QXmppMixInvitation.h"
 #include "QXmppUtils.h"
 
+#include <optional>
+
 #include <QDateTime>
 #include <QDomElement>
 #include <QTextStream>

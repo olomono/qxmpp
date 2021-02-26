@@ -27,6 +27,8 @@
 #include "QXmppMessage.h"
 #include "QXmppMixInvitation.h"
 
+#include <optional>
+
 #include "util.h"
 #include <QObject>
 
