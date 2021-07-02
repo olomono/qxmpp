@@ -217,8 +217,8 @@ QFuture<QXmppPubSubManager::ItemsResult<T>> QXmppPubSubManager::requestItems(con
         if (auto element = std::get_if<QDomElement>(&result)) {
             QXmppPubSubIq<T> resultIq;
             resultIq.parse(*element);
-            if (!resultIq.error().isNull()) {
-                resultInterface.reportResult(resultIq.error());
+            if (resultIq.type() == QXmppIq::Error) {
+                resultInterface->reportResult(resultIq.error());
             } else {
                 QXmppPubSubIq<T> resultIq;
                 resultIq.parse(*element);
@@ -230,7 +230,10 @@ QFuture<QXmppPubSubManager::ItemsResult<T>> QXmppPubSubManager::requestItems(con
                 resultInterface->reportResult(items);
             }
         } else if (const auto *error = std::get_if<QXmpp::PacketState>(&result)) {
-            resultInterface->reportResult(*error);
+            using Error = QXmppStanza::Error;
+            const auto stanzaError = Error(Error::Wait, Error::UndefinedCondition,
+                         QStringLiteral("Couldn't send request: lost connection."));
+            resultInterface->reportResult(stanzaError);
         }
         resultInterface->reportFinished();
         watcher->deleteLater();

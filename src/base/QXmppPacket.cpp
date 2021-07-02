@@ -34,6 +34,7 @@ QXmppPacket::QXmppPacket(const QXmppStanza &stanza)
 {
     QXmlStreamWriter xmlStream(&m_data);
     stanza.toXml(&xmlStream);
+    qDebug() << "Send" << m_data;
 }
 
 QByteArray QXmppPacket::data() const

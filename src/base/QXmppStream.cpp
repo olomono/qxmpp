@@ -200,7 +200,9 @@ bool QXmppStream::sendData(const QByteArray &data)
     logSent(QString::fromUtf8(data));
     if (!d->socket || d->socket->state() != QAbstractSocket::ConnectedState)
         return false;
-    return d->socket->write(data) == data.size();
+    const auto result = d->socket->write(data) == data.size();
+    qDebug() << "sendData:" << result;
+    return result;
 }
 
 ///
@@ -214,6 +216,7 @@ bool QXmppStream::sendPacket(const QXmppStanza &stanza)
     return send(stanza).resultAt(0) != QXmpp::NotSent;
 }
 
+#include <QDebug>
 ///
 /// Sends an XMPP packet to the peer.
 ///
@@ -227,6 +230,7 @@ QFuture<QXmpp::PacketState> QXmppStream::send(const QXmppStanza &stanza)
     // handle stream management
     d->streamManager.handlePacketSent(packet);
 
+    qDebug() << "Send result" << packet.future().resultAt(0);
     return packet.future();
 }
 
@@ -239,6 +243,7 @@ QFuture<QXmpp::PacketState> QXmppStream::send(const QXmppStanza &stanza)
 ///
 QFuture<QXmppStream::IqResult> QXmppStream::sendIq(const QXmppIq &iq)
 {
+    qDebug() << "sendIq id=" << iq.id();
     if (iq.id().isEmpty()) {
         warning(QStringLiteral("QXmppStream::sendIq() error: ID is empty. Using random ID."));
         auto newIq = iq;
@@ -418,6 +423,8 @@ void QXmppStream::processData(const QString &data)
     if (!doc.setContent(wrappedStanzas, true))
         return;
 
+    qDebug() << d->dataBuffer;
+
     //
     // Success: We can clear the buffer and send a 'received' log message
     //
@@ -470,7 +477,6 @@ bool QXmppStream::handleIqResponse(const QDomElement &stanza)
 
     if (auto itr = d->runningIqs.find(stanza.attribute(QStringLiteral("id")));
         itr != d->runningIqs.end()) {
-
         auto *state = itr.value();
         state->reportResult(stanza);
         state->reportFinished();
