@@ -12,6 +12,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/modules"
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Network Xml)
 find_package(Qt${QT_VERSION_MAJOR} 5.9.2 REQUIRED COMPONENTS Core Network Xml)
+find_package(PkgConfig REQUIRED)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -24,6 +25,7 @@ option(BUILD_DOCUMENTATION "Build API documentation." OFF)
 option(BUILD_EXAMPLES "Build examples." ON)
 
 option(WITH_GSTREAMER "Build with GStreamer support for Jingle" OFF)
+option(WITH_OMEMO "Build with OMEMO Encryption" OFF)
 
 add_definitions(
     -DQT_DISABLE_DEPRECATED_BEFORE=0x050F00

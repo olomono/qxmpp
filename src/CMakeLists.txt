@@ -87,6 +87,7 @@ set(INSTALL_HEADER_FILES
     client/QXmppMamManager.h
     client/QXmppMessageReceiptManager.h
     client/QXmppMucManager.h
+    client/QXmppOmemoManager.h
     client/QXmppOutgoingClient.h
     client/QXmppRegistrationManager.h
     client/QXmppPubSubEventManager.h
@@ -185,6 +186,7 @@ set(SOURCE_FILES
     client/QXmppMamManager.cpp
     client/QXmppMessageReceiptManager.cpp
     client/QXmppMucManager.cpp
+    client/QXmppOmemoManager.cpp
     client/QXmppOutgoingClient.cpp
     client/QXmppRosterManager.cpp
     client/QXmppRegistrationManager.cpp
@@ -265,6 +267,13 @@ if(WITH_GSTREAMER)
         ${GLIB2_LIBRARIES}
         ${GOBJECT_LIBRARIES}
         ${GSTREAMER_LIBRARY}
+    )
+endif()
+if(WITH_OMEMO)
+    pkg_check_modules(OmemoC REQUIRED IMPORTED_TARGET libomemo-c)
+    target_link_libraries(qxmpp
+        PRIVATE
+        PkgConfig::OmemoC
     )
 endif()
 
