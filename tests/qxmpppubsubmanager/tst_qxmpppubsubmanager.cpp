@@ -713,21 +713,23 @@ void tst_QXmppPubSubManager::testRequestCurrentItem()
 {
     auto [test, psManager] = Client();
 
-    auto future = psManager->requestItem(QStringLiteral("pubsub.shakespeare.lit"), QStringLiteral("princely_musings"), PSManager::Current);
+    auto future = psManager->requestItem<QXmppTuneItem>(QStringLiteral("pubsub.shakespeare.lit"), QStringLiteral("princely_musings"), PSManager::Current);
     test.expect(QStringLiteral("<iq id='qxmpp1' to='pubsub.shakespeare.lit' type='get'>"
                                "<pubsub xmlns='http://jabber.org/protocol/pubsub'>"
                                "<items node='princely_musings'>"
                                "<item id='current'/>"
+                               "<tune xmlns='http://jabber.org/protocol/tune'/>"
                                "</items>"
                                "</pubsub></iq>"));
     test.inject(QStringLiteral("<iq id='qxmpp1' from='pubsub.shakespeare.lit' to='francisco@denmark.lit/barracks' type='result'>"
                                "<pubsub xmlns='http://jabber.org/protocol/pubsub'>"
                                "<items node='princely_musings'>"
                                "<item id='current'/>"
+                               "<tune xmlns='http://jabber.org/protocol/tune'/>"
                                "</items>"
                                "</pubsub></iq>"));
 
-    const auto item = expectFutureVariant<QXmppPubSubItem>(future);
+    const auto item = expectFutureVariant<QXmppTuneItem>(future);
     QCOMPARE(item.id(), QStringLiteral("current"));
 }
 
