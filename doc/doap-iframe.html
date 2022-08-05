@@ -1,0 +1,13 @@
+<html>
+	<head>
+		<script>
+			<!-- Dynamic resizing of the frame is needed because its size inside of the page is unknown before rendering it. -->
+			function resizeIframe(obj) {
+				obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + 20 + 'px';
+			}
+		</script>
+	</head>
+	<body>
+		<iframe src="doap.xml" class="xeps" width="100%" height="100%" frameborder="0" onload="resizeIframe(this)"/>
+	</body>
+</html>

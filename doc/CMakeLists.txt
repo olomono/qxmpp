@@ -16,7 +16,9 @@ configure_file(
 
 add_custom_target(
     doc ALL
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/fetch-xeplist.sh
     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+    COMMAND rm ${CMAKE_CURRENT_SOURCE_DIR}/xeplist.xml
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generate API documentation with Doxygen"
     VERBATIM
