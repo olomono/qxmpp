@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2010 Jeremy Lainé <jeremy.laine@m4x.org>
+// SPDX-FileCopyrightText: 2022 Melvin Keskin <melvo@olomono.de>
 //
 // SPDX-License-Identifier: LGPL-2.1-or-later
 
@@ -691,6 +692,8 @@ public:
     QString responder;
     QString sid;
 
+    QString mujiGroupChatJid;
+
     QList<QXmppJingleIq::Content> contents;
     QXmppJingleIq::Reason reason;
     bool ringing;
@@ -844,6 +847,30 @@ void QXmppJingleIq::setSid(const QString &sid)
     d->sid = sid;
 }
 
+///
+/// Returns the JID of the \xep{0272, Multiparty Jingle (Muji)} group chat.
+///
+/// \return the Muji group chat JID
+///
+/// \since QXmpp 1.6
+///
+QString QXmppJingleIq::mujiGroupChatJid() const
+{
+    return d->mujiGroupChatJid;
+}
+
+///
+/// Sets the JID of the \xep{0272, Multiparty Jingle (Muji)} group chat.
+///
+/// \param mujiGroupChatJid Muji group chat JID
+///
+/// \since QXmpp 1.6
+///
+void QXmppJingleIq::setMujiGroupChatJid(const QString &mujiGroupChatJid)
+{
+    d->mujiGroupChatJid = mujiGroupChatJid;
+}
+
 /// \cond
 bool QXmppJingleIq::isJingleIq(const QDomElement &element)
 {
@@ -864,6 +891,12 @@ void QXmppJingleIq::parseElementFromChild(const QDomElement &element)
     d->initiator = jingleElement.attribute(QStringLiteral("initiator"));
     d->responder = jingleElement.attribute(QStringLiteral("responder"));
     d->sid = jingleElement.attribute(QStringLiteral("sid"));
+
+    // XEP-0272: Multiparty Jingle (Muji)
+    if (const auto mujiGroupChatElement = jingleElement.firstChildElement(QStringLiteral("muji"));
+        mujiGroupChatElement.namespaceURI() == ns_muji) {
+        d->mujiGroupChatJid = mujiGroupChatElement.attribute(QStringLiteral("room"));
+    }
 
     // content
     d->contents.clear();
@@ -890,6 +923,15 @@ void QXmppJingleIq::toXmlElementFromChild(QXmlStreamWriter *writer) const
     helperToXmlAddAttribute(writer, QStringLiteral("initiator"), d->initiator);
     helperToXmlAddAttribute(writer, QStringLiteral("responder"), d->responder);
     helperToXmlAddAttribute(writer, QStringLiteral("sid"), d->sid);
+
+    // XEP-0272: Multiparty Jingle (Muji)
+    if (!d->mujiGroupChatJid.isEmpty()) {
+        writer->writeStartElement(QStringLiteral("muji"));
+        writer->writeDefaultNamespace(ns_muji);
+        helperToXmlAddAttribute(writer, QStringLiteral("room"), d->mujiGroupChatJid);
+        writer->writeEndElement();
+    }
+
     for (const auto &content : d->contents)
         content.toXml(writer);
     d->reason.toXml(writer);

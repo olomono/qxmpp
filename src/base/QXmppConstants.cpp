@@ -105,6 +105,8 @@ const char *ns_jingle_ice_udp = "urn:xmpp:jingle:transports:ice-udp:1";
 const char *ns_jingle_rtp = "urn:xmpp:jingle:apps:rtp:1";
 const char *ns_jingle_rtp_audio = "urn:xmpp:jingle:apps:rtp:audio";
 const char *ns_jingle_rtp_video = "urn:xmpp:jingle:apps:rtp:video";
+// XEP-0272: Multiparty Jingle (Muji)
+const char *ns_muji = "urn:xmpp:jingle:muji:0";
 // XEP-0184: Message Receipts
 const char *ns_message_receipts = "urn:xmpp:receipts";
 // XEP-0198: Stream Management

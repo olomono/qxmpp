@@ -1,10 +1,12 @@
 // SPDX-FileCopyrightText: 2009 Manjeet Dahiya <manjeetdahiya@gmail.com>
+// SPDX-FileCopyrightText: 2022 Melvin Keskin <melvo@olomono.de>
 //
 // SPDX-License-Identifier: LGPL-2.1-or-later
 
 #include "QXmppPresence.h"
 
 #include "QXmppConstants_p.h"
+#include "QXmppJingleIq.h"
 #include "QXmppUtils.h"
 
 #include <QDateTime>
@@ -58,6 +60,10 @@ public:
     // in accordance with RFC 3174
     QByteArray photoHash;
     QXmppPresence::VCardUpdateType vCardUpdateType;
+
+    // XEP-0272: Multiparty Jingle (Muji)
+    bool isPreparingMujiSession = false;
+    QVector<QXmppJingleIq::Content> mujiContents;
 
     // XEP-0319: Last User Interaction in Presence
     QDateTime lastUserInteraction;
@@ -253,6 +259,54 @@ QStringList QXmppPresence::capabilityExt() const
     return d->capabilityExt;
 }
 
+///
+/// Returns whether a \xep{0272, Multiparty Jingle (Muji)} session is being prepared.
+///
+/// \return whether a Muji session is being prepared
+///
+/// \since QXmpp 1.6
+///
+bool QXmppPresence::isPreparingMujiSession() const
+{
+    return d->isPreparingMujiSession;
+}
+
+///
+/// Sets whether a \xep{0272, Multiparty Jingle (Muji)} session is being prepared.
+///
+/// \param isPreparingMujiSession whether a Muji session is being prepared
+///
+/// \since QXmpp 1.6
+///
+void QXmppPresence::setIsPreparingMujiSession(bool isPreparingMujiSession)
+{
+    d->isPreparingMujiSession = isPreparingMujiSession;
+}
+
+///
+/// Returns \xep{0272, Multiparty Jingle (Muji)} contents.
+///
+/// \return Muji contents
+///
+/// \since QXmpp 1.6
+///
+QVector<QXmppJingleIq::Content> QXmppPresence::mujiContents() const
+{
+    return d->mujiContents;
+}
+
+///
+/// Sets \xep{0272, Multiparty Jingle (Muji)} contents.
+///
+/// \param mujiContents Muji contents
+///
+/// \since QXmpp 1.6
+///
+void QXmppPresence::setMujiContents(const QVector<QXmppJingleIq::Content> &mujiContents)
+{
+    d->mujiContents = mujiContents;
+}
+
 /// Returns the MUC item.
 
 QXmppMucItem QXmppPresence::mucItem() const
@@ -421,7 +475,7 @@ void QXmppPresence::parseExtension(const QDomElement &element, QXmppElementList 
             d->mucStatusCodes << statusElement.attribute(QStringLiteral("code")).toInt();
             statusElement = statusElement.nextSiblingElement(QStringLiteral("status"));
         }
-        // XEP-0115: Entity Capabilities
+    // XEP-0115: Entity Capabilities
     } else if (element.tagName() == QStringLiteral("c") && element.namespaceURI() == ns_capabilities) {
         d->capabilityNode = element.attribute(QStringLiteral("node"));
         d->capabilityVer = QByteArray::fromBase64(element.attribute(QStringLiteral("ver")).toLatin1());
@@ -431,7 +485,7 @@ void QXmppPresence::parseExtension(const QDomElement &element, QXmppElementList 
 #else
         d->capabilityExt = element.attribute(QStringLiteral("ext")).split(' ', QString::SkipEmptyParts);
 #endif
-        // XEP-0153: vCard-Based Avatars
+    // XEP-0153: vCard-Based Avatars
     } else if (element.namespaceURI() == ns_vcard_update) {
         QDomElement photoElement = element.firstChildElement(QStringLiteral("photo"));
         if (photoElement.isNull()) {
@@ -444,13 +498,26 @@ void QXmppPresence::parseExtension(const QDomElement &element, QXmppElementList 
             else
                 d->vCardUpdateType = VCardUpdateValidPhoto;
         }
-        // XEP-0319: Last User Interaction in Presence
+    // XEP-0272: Multiparty Jingle (Muji)
+    } else if (element.tagName() == QStringLiteral("muji") && element.namespaceURI() == ns_muji) {
+        if (!element.firstChildElement(QStringLiteral("preparing")).isNull()) {
+            d->isPreparingMujiSession = true;
+        }
+
+        for (auto contentElement = element.firstChildElement(QStringLiteral("content"));
+             !contentElement.isNull();
+             contentElement = contentElement.nextSiblingElement(QStringLiteral("content"))) {
+            QXmppJingleIq::Content content;
+            content.parse(contentElement);
+            d->mujiContents.append(content);
+        }
+    // XEP-0319: Last User Interaction in Presence
     } else if (element.tagName() == QStringLiteral("idle") && element.namespaceURI() == ns_idle) {
         if (element.hasAttribute(QStringLiteral("since"))) {
             const QString since = element.attribute(QStringLiteral("since"));
             d->lastUserInteraction = QXmppUtils::datetimeFromString(since);
         }
-        // XEP-0405: Mediated Information eXchange (MIX): Participant Server Requirements
+    // XEP-0405: Mediated Information eXchange (MIX): Participant Server Requirements
     } else if (element.tagName() == QStringLiteral("mix") && element.namespaceURI() == ns_mix_presence) {
         d->mixUserJid = element.firstChildElement(QStringLiteral("jid")).text();
         d->mixUserNick = element.firstChildElement(QStringLiteral("nick")).text();
@@ -526,6 +593,22 @@ void QXmppPresence::toXml(QXmlStreamWriter *xmlWriter) const
         default:
             break;
         }
+        xmlWriter->writeEndElement();
+    }
+
+    // XEP-0272: Multiparty Jingle (Muji)
+    if (d->isPreparingMujiSession || !d->mujiContents.isEmpty()) {
+        xmlWriter->writeStartElement(QStringLiteral("muji"));
+        xmlWriter->writeDefaultNamespace(ns_muji);
+
+        if (d->isPreparingMujiSession) {
+            xmlWriter->writeEmptyElement(QStringLiteral("preparing"));
+        }
+
+        for (const auto &mujiContent : std::as_const(d->mujiContents)) {
+            mujiContent.toXml(xmlWriter);
+        }
+
         xmlWriter->writeEndElement();
     }
 
