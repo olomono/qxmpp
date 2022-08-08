@@ -1,4 +1,5 @@
 // SPDX-FileCopyrightText: 2010 Jeremy Lainé <jeremy.laine@m4x.org>
+// SPDX-FileCopyrightText: 2022 Melvin Keskin <melvo@olomono.de>
 //
 // SPDX-License-Identifier: LGPL-2.1-or-later
 
@@ -9,9 +10,12 @@
 #include "QXmppClientExtension.h"
 #include "QXmppLogger.h"
 
+#include <QFuture>
 #include <QIODevice>
 #include <QMetaType>
 #include <QObject>
+#include <QXmppJingleIq.h>
+#include <QXmppSendResult.h>
 
 class QHostAddress;
 class QXmppCallManagerPrivate;
@@ -55,6 +59,9 @@ public:
     void setTurnUser(const QString &user);
     void setTurnPassword(const QString &password);
 
+    QFuture<QXmpp::SendResult> prepareGroupCallStart(const QString &groupChatJid);
+    QFuture<QXmpp::SendResult> prepareGroupCallEnd(const QString &groupChatJid);
+
     /// \cond
     QStringList discoveryFeatures() const override;
     bool handleStanza(const QDomElement &element) override;
@@ -69,6 +76,8 @@ Q_SIGNALS:
 
     /// This signal is emitted when a call (incoming or outgoing) is started.
     void callStarted(QXmppCall *call);
+
+    void groupCallParticipantsPrepared(const QString &groupChatJid);
 
 public Q_SLOTS:
     QXmppCall *call(const QString &jid);
