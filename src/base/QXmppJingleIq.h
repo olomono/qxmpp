@@ -13,6 +13,49 @@ class QXmppJingleCandidatePrivate;
 class QXmppJingleIqContentPrivate;
 class QXmppJingleIqPrivate;
 class QXmppJinglePayloadTypePrivate;
+class QXmppJingleRtpFeedbackNegotiationPrivate;
+class QXmppJingleRtpFeedbackNegotiationIntervalPrivate;
+
+class QXMPP_EXPORT QXmppJingleRtpFeedbackNegotiation
+{
+public:
+    QXmppJingleRtpFeedbackNegotiation();
+    QXmppJingleRtpFeedbackNegotiation(const QXmppJingleRtpFeedbackNegotiation &other);
+    ~QXmppJingleRtpFeedbackNegotiation();
+
+    QString type() const;
+    void setType(const QString &type);
+
+    QString subtype() const;
+    void setSubtype(const QString &subtype);
+
+    /// \cond
+    void parse(const QDomElement &element);
+    void toXml(QXmlStreamWriter *writer) const;
+    /// \endcond
+
+private:
+    QSharedDataPointer<QXmppJingleRtpFeedbackNegotiationPrivate> d;
+};
+
+class QXMPP_EXPORT QXmppJingleRtpFeedbackNegotiationInterval
+{
+public:
+    QXmppJingleRtpFeedbackNegotiationInterval();
+    QXmppJingleRtpFeedbackNegotiationInterval(const QXmppJingleRtpFeedbackNegotiationInterval &other);
+    ~QXmppJingleRtpFeedbackNegotiationInterval();
+
+    uint32_t value() const;
+    void setValue(uint32_t value);
+
+    /// \cond
+    void parse(const QDomElement &element);
+    void toXml(QXmlStreamWriter *writer) const;
+    /// \endcond
+
+private:
+    QSharedDataPointer<QXmppJingleRtpFeedbackNegotiationIntervalPrivate> d;
+};
 
 ///
 /// \brief The QXmppJinglePayloadType class represents a payload type
@@ -45,6 +88,13 @@ public:
 
     unsigned int ptime() const;
     void setPtime(unsigned int ptime);
+
+    // XEP-0293: Jingle RTP Feedback Negotiation
+    std::optional<QXmppJingleRtpFeedbackNegotiation> rtpFeedbackNegotiation();
+    void setRtpFeedbackNegotiation(const std::optional<QXmppJingleRtpFeedbackNegotiation> &rtpFeedbackNegotiation);
+
+    std::optional<QXmppJingleRtpFeedbackNegotiationInterval> rtpFeedbackNegotiationInterval();
+    void setRtpFeedbackNegotiationInterval(const std::optional<QXmppJingleRtpFeedbackNegotiationInterval> &rtpFeedbackNegotiationInterval);
 
     /// \cond
     void parse(const QDomElement &element);
@@ -201,6 +251,13 @@ public:
 
         QString transportPassword() const;
         void setTransportPassword(const QString &password);
+
+        // XEP-0293: Jingle RTP Feedback Negotiation
+        std::optional<QXmppJingleRtpFeedbackNegotiation> rtpFeedbackNegotiation();
+        void setRtpFeedbackNegotiation(const std::optional<QXmppJingleRtpFeedbackNegotiation> &rtpFeedbackNegotiation);
+
+        std::optional<QXmppJingleRtpFeedbackNegotiationInterval> rtpFeedbackNegotiationInterval();
+        void setRtpFeedbackNegotiationInterval(const std::optional<QXmppJingleRtpFeedbackNegotiationInterval> &rtpFeedbackNegotiationInterval);
 
         // XEP-0320: Use of DTLS-SRTP in Jingle Sessions
         QByteArray transportFingerprint() const;

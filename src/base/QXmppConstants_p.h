@@ -139,6 +139,8 @@ extern const char *ns_bob;
 extern const char *ns_conference;
 // XEP-0280: Message Carbons
 extern const char *ns_carbons;
+// XEP-0293: Jingle RTP Feedback Negotiation
+extern const char *ns_jingle_rtp_feedback_negotiation;
 // XEP-0297: Stanza Forwarding
 extern const char *ns_forwarding;
 // XEP-0308: Last Message Correction

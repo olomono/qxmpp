@@ -127,6 +127,8 @@ const char *ns_bob = "urn:xmpp:bob";
 const char *ns_conference = "jabber:x:conference";
 // XEP-0280: Message Carbons
 const char *ns_carbons = "urn:xmpp:carbons:2";
+// XEP-0293: Jingle RTP Feedback Negotiation
+const char *ns_jingle_rtp_feedback_negotiation = "urn:xmpp:jingle:apps:rtp:rtcp-fb:0";
 // XEP-0297: Stanza Forwarding
 const char *ns_forwarding = "urn:xmpp:forward:0";
 // XEP-0308: Last Message Correction
