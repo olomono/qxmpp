@@ -70,6 +70,7 @@ QStringList QXmppCallManager::discoveryFeatures() const
         ns_jingle_rtp_audio,
         ns_jingle_rtp_video,
         ns_jingle_ice_udp,  // XEP-0176 : Jingle ICE-UDP Transport Method
+        ns_jingle_rtp_feedback_negotiation
     };
 }
 
