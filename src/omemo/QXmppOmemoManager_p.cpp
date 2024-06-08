@@ -1610,13 +1610,12 @@ QXmppTask<std::optional<QCA::SecureArray>> ManagerPrivate::extractPayloadDecrypt
             warning(u"OMEMO envelope data could not be deserialized"_s);
             interface.finish(std::nullopt);
         } else {
-            BufferPtr publicIdentityKeyBuffer;
+            BufferPtr publicIdentityKeyBuffer(ec_public_key_get_ed(pre_key_signal_message_get_identity_key(omemoEnvelopeData.get())));
 
-            if (ec_public_key_serialize(publicIdentityKeyBuffer.ptrRef(), pre_key_signal_message_get_identity_key(omemoEnvelopeData.get())) < 0) {
+            if (const auto key = publicIdentityKeyBuffer.toByteArray(); key.isEmpty()) {
                 warning(u"Public Identity key could not be retrieved"_s);
                 interface.finish(std::nullopt);
             } else {
-                const auto key = publicIdentityKeyBuffer.toByteArray();
                 auto &device = devices[senderJid][senderDeviceId];
                 auto &storedKeyId = device.keyId;
 
@@ -1667,7 +1666,7 @@ QXmppTask<std::optional<QCA::SecureArray>> ManagerPrivate::extractPayloadDecrypt
                     }
 
                     // Store the key's trust level if it is not stored yet.
-                    auto future = q->trustLevel(senderJid, storedKeyId);
+                    auto future = q->trustLevel(senderJid, key);
                     future.then(q, [=, this](TrustLevel trustLevel) mutable {
                         if (trustLevel == TrustLevel::Undecided) {
                             storeKeyDependingOnSecurityPolicy(senderJid, key);
