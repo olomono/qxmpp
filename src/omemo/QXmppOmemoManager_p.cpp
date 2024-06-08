@@ -2951,15 +2951,21 @@ QXmppTask<bool> ManagerPrivate::changeDeviceLabel(const QString &deviceLabel)
 
     ownDevice.label = deviceLabel;
 
-    if (isStarted) {
+    auto updateDeviceLabel = [this, interface]() mutable {
         auto future = omemoStorage->setOwnDevice(ownDevice);
         future.then(q, [=, this]() mutable {
             publishDeviceListItem(true, [=](bool isPublished) mutable {
                 interface.finish(std::move(isPublished));
             });
         });
+    };
+
+    if (isStarted) {
+        updateDeviceLabel();
     } else {
-        interface.finish(true);
+        q->connect(q->client(), &QXmppClient::connected, q, [updateDeviceLabel]() mutable {
+            updateDeviceLabel();
+        });
     }
 
     return interface.task();
